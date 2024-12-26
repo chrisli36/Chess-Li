@@ -33,7 +33,7 @@ class Move:
             return f"From {self.start} move to {self.end}"
         elif self.type == MoveType.TAKE:
             return f"From {self.start} take on {self.end}"
-        return self.__repr__
+        return self.__repr__()
     def __repr__(self):
         return f"From {self.start} to {self.end}"
     def __eq__(self, o):

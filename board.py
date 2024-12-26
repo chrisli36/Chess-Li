@@ -35,6 +35,7 @@ class Board:
         self.white_pieces = 0
         self.black_pieces = 0
         self.turn = Turn.WHITE
+        self.enemy = self.black_pieces
         self.all_moves = dict()
 
         self.updated = False
@@ -89,6 +90,11 @@ class Board:
             self.black_pieces |= p
         self.pieces = self.black_pieces | self.white_pieces
 
+        if self.turn == Turn.WHITE:
+            self.enemy = self.black_pieces
+        elif self.turn == Turn.BLACK:
+            self.enemy = self.white_pieces
+
         self.calculate_all_valid_moves()
 
         self.updated = True
@@ -105,6 +111,159 @@ class Board:
                 self.all_moves[start] = moves
         return self.all_moves
 
+    def _calc_pawn_moves(self, position: Position, moves: dict[Position, Move]) -> None:
+        if position.overlap(self.white_pieces):
+            pawn_forward = Position.up
+            pawn_take_right = Position.up_right
+            pawn_take_left = Position.up_left
+        elif position.overlap(self.black_pieces):
+            pawn_forward = Position.down
+            pawn_take_right = Position.down_left
+            pawn_take_left = Position.down_right
+        opposing = position.overlap(self.enemy)
+        pawn = Piece.WHITE_PAWN + (6 if position.overlap(self.black_pieces) else 0)
+        
+        # update controlled squares
+        if opposing:
+            for pawn_take in [pawn_take_left, pawn_take_right]:
+                take = pawn_take(position)
+                if take:
+                    self.controlled |= take.pos
+            return
+
+        # calculate forward pawn moves
+        forward = pawn_forward(position)
+        if forward and not forward.overlap(self.pieces):
+            moves[forward] = Move(position, forward, MoveType.MOVE, pawn)
+            fforward = pawn_forward(forward)
+            if ((self.turn == Turn.WHITE and position.rank() == 2) or (self.turn == Turn.BLACK and position.rank() == 7)) \
+                    and fforward and not fforward.overlap(self.pieces):
+                moves[fforward] = Move(position, fforward, MoveType.MOVE, pawn)
+        # calculate taking on left and right
+        for pawn_take in [pawn_take_left, pawn_take_right]:
+            take = pawn_take(position)
+            if take is None:
+                continue
+            # self.controlled |= take.pos
+            if take.overlap(self.enemy):
+                moves[take] = Move(position, take, MoveType.TAKE, pawn)
+
+    def _calc_knight_moves(self, position: Position, moves: dict[Position, Move]) -> None:
+        opposing = position.overlap(self.enemy)
+        knight = Piece.WHITE_KNIGHT + (6 if position.overlap(self.black_pieces) else 0)
+
+        # update controlled squares
+        if opposing:
+            for dir in KNIGHT_DIRECTIONS:
+                mv = dir(position)
+                if mv:
+                    self.controlled |= mv.pos
+            return
+
+        for dir in KNIGHT_DIRECTIONS:
+            mv = dir(position)
+            if mv is None:
+                continue
+            # calculate unoccupied squares
+            if not mv.overlap(self.pieces):
+                moves[mv] = Move(position, mv, MoveType.MOVE, knight)
+            # calculate taking enemy pieces
+            elif mv.overlap(self.enemy):
+                moves[mv] = Move(position, mv, MoveType.TAKE, knight)
+
+    def _calc_bishop_moves(self, position: Position, moves: dict[Position, Move]) -> None:
+        opposing = position.overlap(self.enemy)
+        bishop = Piece.WHITE_BISHOP + (6 if position.overlap(self.black_pieces) else 0)
+
+        # update controlled squares
+        if opposing:
+            for dir in BISHOP_DIRECTIONS:
+                mv = dir(position)
+                while mv and not mv.overlap(self.pieces):
+                    self.controlled |= mv.pos
+                    mv = dir(mv)
+                if mv:
+                    self.controlled |= mv.pos
+            return
+        
+        # calculate moves in each diagonal direction
+        for dir in BISHOP_DIRECTIONS:
+            mv = dir(position)
+            while mv and not mv.overlap(self.pieces):
+                moves[mv] = Move(position, mv, MoveType.MOVE, bishop)
+                mv = dir(mv)
+            # if there's an enemy piece at the end, then we could take
+            if mv and mv.overlap(self.enemy):
+                moves[mv] = Move(position, mv, MoveType.TAKE, bishop)
+    
+    def _calc_rook_moves(self, position: Position, moves: dict[Position, Move]) -> None:
+        opposing = position.overlap(self.enemy)
+        rook = Piece.WHITE_ROOK + (6 if position.overlap(self.black_pieces) else 0)
+
+        if opposing:
+            for dir in ROOK_DIRECTIONS:
+                mv = dir(position)
+                while mv and not mv.overlap(self.pieces):
+                    self.controlled |= mv.pos
+                    mv = dir(mv)
+                if mv:
+                    self.controlled |= mv.pos
+            return
+
+        # calculate moves in each straight direction
+        for dir in ROOK_DIRECTIONS:
+            mv = dir(position)
+            while mv and not mv.overlap(self.pieces):
+                moves[mv] = Move(position, mv, MoveType.MOVE, rook)
+                mv = dir(mv)
+            # if there's an enemy piece at the end, then we could take
+            if mv and mv.overlap(self.enemy):
+                moves[mv] = Move(position, mv, MoveType.TAKE, rook)
+    
+    def _calc_queen_moves(self, position: Position, moves: dict[Position, Move]) -> None:
+        opposing = position.overlap(self.enemy)
+        queen = Piece.WHITE_QUEEN + (6 if position.overlap(self.black_pieces) else 0)
+
+        if opposing:
+            for dir in ROOK_DIRECTIONS + BISHOP_DIRECTIONS:
+                mv = dir(position)
+                while mv and not mv.overlap(self.pieces):
+                    self.controlled |= mv.pos
+                    mv = dir(mv)
+                if mv:
+                    self.controlled |= mv.pos
+            return
+
+        # calculate moves in each diagonal direction
+        for dir in ROOK_DIRECTIONS + BISHOP_DIRECTIONS:
+            mv = dir(position)
+            while mv and not mv.overlap(self.pieces):
+                moves[mv] = Move(position, mv, MoveType.MOVE, queen)
+                mv = dir(mv)
+            # if there's an enemy piece at the end, then we could take
+            if mv and mv.overlap(self.enemy):
+                moves[mv] = Move(position, mv, MoveType.TAKE, queen)
+
+    def _calc_king_moves(self, position: Position, moves: dict[Position, Move]) -> None:
+        opposing = position.overlap(self.enemy)
+        king = Piece.WHITE_KING + (6 if position.overlap(self.black_pieces) else 0)
+
+        if opposing:
+            for dir in BISHOP_DIRECTIONS + ROOK_DIRECTIONS:
+                mv = dir(position)
+                if mv:
+                    self.controlled |= mv.pos
+            return
+
+        for dir in BISHOP_DIRECTIONS + ROOK_DIRECTIONS:
+            mv = dir(position)
+            if mv is None or mv.overlap(self.controlled):
+                continue
+            if not mv.overlap(self.pieces):
+                moves[mv] = Move(position, mv, MoveType.MOVE, king)
+            elif mv.overlap(self.enemy):
+                moves[mv] = Move(position, mv, MoveType.TAKE, king)
+
     def calculate_valid_moves(self, position: Position) -> dict[Position, Move]:
         if self.updated:
             return self.all_moves[position]
@@ -113,116 +272,18 @@ class Board:
         if not position.overlap(self.pieces):
             return moves
         
-        if self.turn == Turn.WHITE and position.overlap(self.white_pieces):
-            my_pawns = self.pieces_list[Piece.WHITE_PAWN]
-            pawn_forward = Position.up
-            pawn_take_right = Position.up_right
-            pawn_take_left = Position.up_left
-            offset = 0
-            enemy = self.black_pieces
-        elif self.turn == Turn.BLACK and position.overlap(self.black_pieces):
-            my_pawns = self.pieces_list[Piece.BLACK_PAWN]
-            pawn_forward = Position.down
-            pawn_take_right = Position.down_left
-            pawn_take_left = Position.down_right
-            offset = 6
-            enemy = self.white_pieces
-        else:
-            return moves
-        
-        if position.overlap(my_pawns):
-            pawn = Piece.WHITE_PAWN + offset
-            # calculate forward pawn moves
-            forward = pawn_forward(position)
-            if forward and not forward.overlap(self.pieces):
-                moves[forward] = Move(position, forward, MoveType.MOVE, pawn)
-                fforward = pawn_forward(forward)
-                if ((self.turn == Turn.WHITE and position.rank() == 2) or (self.turn == Turn.BLACK and position.rank() == 7)) \
-                        and fforward and not fforward.overlap(self.pieces):
-                    moves[fforward] = Move(position, fforward, MoveType.MOVE, pawn)
-            # calculate taking on left and right
-            for pawn_take in [pawn_take_left, pawn_take_right]:
-                take = pawn_take(position)
-                if take is None:
-                    continue
-                self.controlled |= take.pos
-                if take.overlap(enemy):
-                    moves[take] = Move(position, take, MoveType.TAKE, pawn)
-        
+        if position.overlap(self.pieces_list[Piece.WHITE_PAWN] | self.pieces_list[Piece.BLACK_PAWN]):
+            self._calc_pawn_moves(position, moves)
         elif position.overlap(self.pieces_list[Piece.WHITE_KNIGHT] | self.pieces_list[Piece.BLACK_KNIGHT]):
-            knight = Piece.WHITE_KNIGHT + offset
-            for dir in KNIGHT_DIRECTIONS:
-                mv = dir(position)
-                if mv is None:
-                    continue
-                self.controlled |= mv.pos
-                # calculate unoccupied squares
-                if not mv.overlap(self.pieces):
-                    moves[mv] = Move(position, mv, MoveType.MOVE, knight)
-                # calculate taking enemy pieces
-                if mv.overlap(enemy):
-                    moves[mv] = Move(position, mv, MoveType.TAKE, knight)
-        
+            self._calc_knight_moves(position, moves)
         elif position.overlap(self.pieces_list[Piece.WHITE_BISHOP] | self.pieces_list[Piece.BLACK_BISHOP]):
-            bishop = Piece.WHITE_BISHOP + offset
-            # calculate moves in each diagonal direction
-            for dir in BISHOP_DIRECTIONS:
-                mv = dir(position)
-                while mv and not mv.overlap(self.pieces):
-                    self.controlled |= mv.pos
-                    moves[mv] = Move(position, mv, MoveType.MOVE, bishop)
-                    mv = dir(mv)
-                # if there's an enemy piece at the end, then we could take
-                if mv is None:
-                    continue
-                self.controlled |= mv.pos
-                if mv.overlap(enemy):
-                    moves[mv] = Move(position, mv, MoveType.TAKE, bishop)
-
+            self._calc_bishop_moves(position, moves)
         elif position.overlap(self.pieces_list[Piece.WHITE_ROOK] | self.pieces_list[Piece.BLACK_ROOK]):
-            rook = Piece.WHITE_ROOK + offset
-            # calculate moves in each straight direction
-            for dir in ROOK_DIRECTIONS:
-                mv = dir(position)
-                while mv and not mv.overlap(self.pieces):
-                    self.controlled |= mv.pos
-                    moves[mv] = Move(position, mv, MoveType.MOVE, rook)
-                    mv = dir(mv)
-                # if there's an enemy piece at the end, then we could take
-                if mv is None:
-                    continue
-                self.controlled |= mv.pos
-                if mv.overlap(enemy):
-                    moves[mv] = Move(position, mv, MoveType.TAKE, rook)
-
+            self._calc_rook_moves(position, moves)
         elif position.overlap(self.pieces_list[Piece.WHITE_QUEEN] | self.pieces_list[Piece.BLACK_QUEEN]):
-            queen = Piece.WHITE_QUEEN + offset
-            # calculate moves in each diagonal direction
-            for dir in ROOK_DIRECTIONS + BISHOP_DIRECTIONS:
-                mv = dir(position)
-                while mv and not mv.overlap(self.pieces):
-                    self.controlled |= mv.pos
-                    moves[mv] = Move(position, mv, MoveType.MOVE, queen)
-                    mv = dir(mv)
-                # if there's an enemy piece at the end, then we could take
-                if mv is None:
-                    continue
-                self.controlled |= mv.pos
-                if mv.overlap(enemy):
-                    moves[mv] = Move(position, mv, MoveType.TAKE, queen)
-
+            self._calc_queen_moves(position, moves)
         elif position.overlap(self.pieces_list[Piece.WHITE_KING] | self.pieces_list[Piece.BLACK_KING]):
-            king = Piece.WHITE_KING + offset
-            for dir in BISHOP_DIRECTIONS + ROOK_DIRECTIONS:
-                mv = dir(position)
-                if mv is None:
-                    continue
-                self.controlled |= 
-                if not mv.overlap(self.pieces):
-                    moves[mv] = Move(position, mv, MoveType.MOVE, king)
-                elif mv.overlap(enemy):
-                    moves[mv] = Move(position, mv, MoveType.TAKE, king)
-
+            self._calc_king_moves(position, moves)
         return moves
 
     def make_move(self, start: str, end: str):
@@ -243,7 +304,8 @@ class Board:
             self.turn = ~self.turn
             self.updated = False
         else:
-            print("not a move!")
+            ex = Move(s, e)
+            print(f"{ex} is not a move!")
 
 board = Board()
 print(board)
@@ -257,4 +319,10 @@ board.make_move("e5", "d4")
 print(board)
 print(board.calculate_valid_moves(Position.get_position("d1")))
 board.make_move("d1", "d4")
+print(board)
+board.make_move("e8", "e7")
+print(board)
+board.make_move("e1", "e2")
+print(board)
+board.make_move("e7", "d6")
 print(board)
