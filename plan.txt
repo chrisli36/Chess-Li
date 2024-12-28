@@ -1,0 +1,26 @@
+make visualization
+
+1. (only done on init) am i in check? (from king, see who's attacking)
+2. if in check:
+    a. determine attackers, can be done during step 1
+    b. if in double check, the king must move
+    c. if in single check, the king can move, attacker can be taken, or maybe attack can be blocked (only bishop, rook, queen)
+3. if not in check, still need to limit the moves of pinned pieces:
+    a. iterate through enemy sights (bishop, rook, queen)
+            if on the same sight as king, and there's one piece inbetween and it's friendly, then need to limit moves for that piece to only on that sight
+4. determine if enemy is in check (from king, see who's attacking)
+
+problems:
+    is there a way to quickly get locations of pieces just from bitmap? possible solution is to keep a set of locations for each piece type, but this adds overhead
+    is there a way to quickly generate a move limiting mask?
+    is there a faster way to generate pseudo-valid moves?
+
+
+
+board states:
+    white's turn or black's turn
+    promotion prompt
+    win or lose
+    in check
+    toggle square
+    select move for square

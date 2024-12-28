@@ -58,25 +58,29 @@ class Board:
         ret += f"""{"White" if self.turn == Turn.WHITE else "Black"} to move"""
         return ret
 
-    def _print_piece(self, position: Position) -> str:
+    def is_piece(self, position: Position) -> bool:
+        self._ensure_updated()
+        return position.overlap(self.pieces) > 0
+
+    def is_enemy_controlled(self, position: Position) -> bool:
+        self._ensure_updated()
+        return position.overlap(self.controlled) > 0
+
+    def get_piece(self, position: Position) -> Piece:
         self._ensure_updated()
         if not (position.overlap(self.pieces)):
-            return " "
+            return Piece.EMPTY
         
-        if position.overlap(self.white_pieces):
-            # is white
-            pass
-        if position.overlap(self.black_pieces):
-            # is black
-            pass
-        
-        representations = ['p', 'n', 'b', 'r', 'q', 'k']
-        for p, r in zip(self.pieces_list[:COLOR_DELIMITER], representations):
+        for i, p in enumerate(self.pieces_list):
             if position.overlap(p):
-                return r
-        for p, r in zip(self.pieces_list[COLOR_DELIMITER:], representations):
-            if position.overlap(p):
-                return r
+                return Piece(i)
+
+    def _print_piece(self, position: Position) -> str:
+        self._ensure_updated()
+        representations = ['p', 'n', 'b', 'r', 'q', 'k', ' ']
+        piece = self.get_piece(position)
+        piece_repr = piece % COLOR_DELIMITER if piece != Piece.EMPTY else len(representations) - 1
+        return representations[piece_repr]
 
     def _ensure_updated(self) -> None:
         if self.updated:
@@ -95,6 +99,7 @@ class Board:
         elif self.turn == Turn.BLACK:
             self.enemy = self.white_pieces
 
+        self.in_check = False
         self.calculate_all_valid_moves()
 
         self.updated = True
@@ -107,9 +112,31 @@ class Board:
         for f in FILES:
             for r in RANKS:
                 start = Position.get_position(f"{f}{r}")
-                moves = self.calculate_valid_moves(start)
+                moves = self.get_valid_moves(start)
                 self.all_moves[start] = moves
         return self.all_moves
+
+    def get_valid_moves(self, position: Position) -> dict[Position, Move]:
+        if self.updated:
+            return self.all_moves[position]
+
+        moves = dict()
+        if not position.overlap(self.pieces):
+            return moves
+        
+        if position.overlap(self.pieces_list[Piece.WHITE_PAWN] | self.pieces_list[Piece.BLACK_PAWN]):
+            self._calc_pawn_moves(position, moves)
+        elif position.overlap(self.pieces_list[Piece.WHITE_KNIGHT] | self.pieces_list[Piece.BLACK_KNIGHT]):
+            self._calc_knight_moves(position, moves)
+        elif position.overlap(self.pieces_list[Piece.WHITE_BISHOP] | self.pieces_list[Piece.BLACK_BISHOP]):
+            self._calc_bishop_moves(position, moves)
+        elif position.overlap(self.pieces_list[Piece.WHITE_ROOK] | self.pieces_list[Piece.BLACK_ROOK]):
+            self._calc_rook_moves(position, moves)
+        elif position.overlap(self.pieces_list[Piece.WHITE_QUEEN] | self.pieces_list[Piece.BLACK_QUEEN]):
+            self._calc_queen_moves(position, moves)
+        elif position.overlap(self.pieces_list[Piece.WHITE_KING] | self.pieces_list[Piece.BLACK_KING]):
+            self._calc_king_moves(position, moves)
+        return moves
 
     def _calc_pawn_moves(self, position: Position, moves: dict[Position, Move]) -> None:
         if position.overlap(self.white_pieces):
@@ -264,32 +291,8 @@ class Board:
             elif mv.overlap(self.enemy):
                 moves[mv] = Move(position, mv, MoveType.TAKE, king)
 
-    def calculate_valid_moves(self, position: Position) -> dict[Position, Move]:
-        if self.updated:
-            return self.all_moves[position]
-
-        moves = dict()
-        if not position.overlap(self.pieces):
-            return moves
-        
-        if position.overlap(self.pieces_list[Piece.WHITE_PAWN] | self.pieces_list[Piece.BLACK_PAWN]):
-            self._calc_pawn_moves(position, moves)
-        elif position.overlap(self.pieces_list[Piece.WHITE_KNIGHT] | self.pieces_list[Piece.BLACK_KNIGHT]):
-            self._calc_knight_moves(position, moves)
-        elif position.overlap(self.pieces_list[Piece.WHITE_BISHOP] | self.pieces_list[Piece.BLACK_BISHOP]):
-            self._calc_bishop_moves(position, moves)
-        elif position.overlap(self.pieces_list[Piece.WHITE_ROOK] | self.pieces_list[Piece.BLACK_ROOK]):
-            self._calc_rook_moves(position, moves)
-        elif position.overlap(self.pieces_list[Piece.WHITE_QUEEN] | self.pieces_list[Piece.BLACK_QUEEN]):
-            self._calc_queen_moves(position, moves)
-        elif position.overlap(self.pieces_list[Piece.WHITE_KING] | self.pieces_list[Piece.BLACK_KING]):
-            self._calc_king_moves(position, moves)
-        return moves
-
-    def make_move(self, start: str, end: str):
+    def make_move(self, s: Position, e: Position):
         self._ensure_updated()
-        s = Position.get_position(start)
-        e = Position.get_position(end)
         if e in self.all_moves[s]:
             move = self.all_moves[s][e]
             move_type = move.type
@@ -307,22 +310,24 @@ class Board:
             ex = Move(s, e)
             print(f"{ex} is not a move!")
 
-board = Board()
-print(board)
-board.make_move("e2", "e4")
-print(board)
-board.make_move("e7", "e5")
-print(board)
-board.make_move("d2", "d4")
-print(board)
-board.make_move("e5", "d4")
-print(board)
-print(board.calculate_valid_moves(Position.get_position("d1")))
-board.make_move("d1", "d4")
-print(board)
-board.make_move("e8", "e7")
-print(board)
-board.make_move("e1", "e2")
-print(board)
-board.make_move("e7", "d6")
-print(board)
+
+if __name__=="__main__":
+    board = Board()
+    print(board)
+    board.make_move("e2", "e4")
+    print(board)
+    board.make_move("e7", "e5")
+    print(board)
+    board.make_move("d2", "d4")
+    print(board)
+    board.make_move("e5", "d4")
+    print(board)
+    print(board.get_valid_moves(Position.get_position("d1")))
+    board.make_move("d1", "d4")
+    print(board)
+    board.make_move("e8", "e7")
+    print(board)
+    board.make_move("e1", "e2")
+    print(board)
+    board.make_move("e7", "d6")
+    print(board)

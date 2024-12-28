@@ -22,6 +22,23 @@ class Piece(IntEnum):
     BLACK_QUEEN = 10
     BLACK_KING = 11
 
+    EMPTY = 12
+
+PIECES = [
+    Piece.WHITE_PAWN, 
+    Piece.WHITE_KNIGHT, 
+    Piece.WHITE_BISHOP, 
+    Piece.WHITE_ROOK,
+    Piece.WHITE_QUEEN, 
+    Piece.WHITE_KING,
+    Piece.BLACK_PAWN, 
+    Piece.BLACK_KNIGHT, 
+    Piece.BLACK_BISHOP, 
+    Piece.BLACK_ROOK,
+    Piece.BLACK_QUEEN, 
+    Piece.BLACK_KING,
+]
+
 class Move:
     def __init__(self, start: Position, end: Position, type: MoveType=None, piece: Piece=None):
         self.start = start
