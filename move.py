@@ -4,16 +4,18 @@ from position import Position
 class MoveType(Enum):
     MOVE = 0
     TAKE = 1
+    PAWN_TWO_MOVE = 2
+    EN_PASSANT = 3
 
 COLOR_DELIMITER = 6
 
 class Piece(IntEnum):
-    WHITE_PAWN = 0
-    WHITE_KNIGHT = 1
-    WHITE_BISHOP = 2
-    WHITE_ROOK = 3
-    WHITE_QUEEN = 4
-    WHITE_KING = 5
+    WHITE_PAWN = 0;     PAWN = 0
+    WHITE_KNIGHT = 1;   KNIGHT = 1
+    WHITE_BISHOP = 2;   BISHOP = 2
+    WHITE_ROOK = 3;     ROOK = 3
+    WHITE_QUEEN = 4;    QUEEN = 4
+    WHITE_KING = 5;     KING = 5
 
     BLACK_PAWN = 6
     BLACK_KNIGHT = 7

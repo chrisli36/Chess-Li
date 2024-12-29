@@ -15,6 +15,12 @@ problems:
     is there a way to quickly generate a move limiting mask?
     is there a faster way to generate pseudo-valid moves?
 
+todo:
+    check mechanics
+    pinned pieces
+    castling
+    promotion
+    en passant
 
 
 board states:

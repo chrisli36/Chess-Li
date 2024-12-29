@@ -64,7 +64,14 @@ while running:
 
             if prev_pos:
                 valid_moves = board.get_valid_moves(prev_pos)
-                if curr_pos in valid_moves:
+                if curr_pos == prev_pos:
+                    prev_pos = None
+                elif valid_moves is None:
+                    if board.is_piece(curr_pos):
+                        prev_pos = curr_pos
+                    else:
+                        prev_pos = None
+                elif curr_pos in valid_moves:
                     board.make_move(prev_pos, curr_pos)
                     just_moved = (prev_pos, curr_pos)
                     prev_pos = None
