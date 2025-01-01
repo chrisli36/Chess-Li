@@ -1,7 +1,6 @@
 RANKS = [8, 7, 6, 5, 4, 3, 2, 1]
 FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-
 class Position:
     def __init__(self, num=0, pos=None):
         if num < 0 or num >= 64:

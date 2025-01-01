@@ -6,6 +6,8 @@ class MoveType(Enum):
     TAKE = 1
     PAWN_TWO_MOVE = 2
     EN_PASSANT = 3
+    CASTLE_KING = 4
+    CASTLE_QUEEN = 5
 
 COLOR_DELIMITER = 6
 

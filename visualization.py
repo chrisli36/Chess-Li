@@ -8,10 +8,8 @@ pygame.init()
 gray = pygame.Color(150, 150, 150)
 tan = pygame.Color(210, 180, 140)
 dark_tan = pygame.Color(126, 108, 84)
-# gray_tan = gray.lerp(tan, 0.5)
 brown = pygame.Color(140, 70, 20)
 dark_brown = pygame.Color(84, 42, 12)
-# gray_brown = gray.lerp(brown, 0.5)
 
 display = pygame.display.set_mode((800, 800))
 pygame.display.set_caption("Chess Li")
@@ -41,7 +39,6 @@ for p in PIECES:
         ((i % COLOR_DELIMITER) * square_size, square_size * (i // COLOR_DELIMITER), square_size, square_size))
 
 display = pygame.display.set_mode((800, 800))
-# display = pygame.Surface((800, 800), pygame.SRCALPHA)
 pygame.display.set_caption("Chess Li")
 
 board = Board()
@@ -60,7 +57,7 @@ while running:
             file = mouse_x // square_size
             rank = mouse_y // square_size
             curr_pos = Position(rank * 8 + file)
-            print(f"Selected {curr_pos}")
+            # print(f"Selected {curr_pos}")
 
             if prev_pos:
                 valid_moves = board.get_valid_moves(prev_pos)
