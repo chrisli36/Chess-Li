@@ -1,7 +1,8 @@
 import pygame
 from board import Board
 from position import *
-from move import *
+from moves import *
+from utils import *
 
 pygame.init()
 
@@ -60,16 +61,17 @@ while running:
             # print(f"Selected {curr_pos}")
 
             if prev_pos:
-                valid_moves = board.get_valid_moves(prev_pos)
+                moves = board.get_moves(prev_pos)
                 if curr_pos == prev_pos:
                     prev_pos = None
-                elif valid_moves is None:
+                elif moves is None:
                     if board.is_piece(curr_pos):
                         prev_pos = curr_pos
                     else:
                         prev_pos = None
-                elif curr_pos in valid_moves:
-                    board.make_move(prev_pos, curr_pos)
+                elif curr_pos.overlap(moves.mask):
+                    # if board.is_promoting()
+                    board.make_move(prev_pos, curr_pos, moves.piece)
                     just_moved = (prev_pos, curr_pos)
                     prev_pos = None
                 elif board.is_piece(curr_pos):
@@ -79,7 +81,7 @@ while running:
             elif board.is_piece(curr_pos):
                 prev_pos = curr_pos
 
-            possible_moves = board.get_valid_moves(prev_pos) if prev_pos else None
+            possible_moves = board.get_moves(prev_pos) if prev_pos else None
 
     display.fill((255, 255, 255))
     position = Position()
@@ -102,7 +104,7 @@ while running:
             if piece != Piece.EMPTY:
                 display.blit(piece_sprites[piece], (file * square_size, rank * square_size))
 
-            if possible_moves and position in possible_moves:
+            if possible_moves and position.overlap(possible_moves.mask):
                 if board.is_piece(position):
                     pygame.draw.circle(
                         display,

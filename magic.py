@@ -1,5 +1,4 @@
 from position import *
-from move import *
 
 ROOK_DIRECTIONS = [Position.up, Position.down, Position.right, Position.left]
 BISHOP_DIRECTIONS = [Position.up_left, Position.up_right, Position.down_right, Position.down_left]
