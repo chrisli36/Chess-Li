@@ -30,3 +30,11 @@ board states:
     in check
     toggle square
     select move for square
+
+
+undo move
+    given start and end square, move piece back from end to start
+    if the piece took a piece, move it back
+    if the piece was a promotion, need to replace start square with pawn
+    if the piece took away castling rights, grant them back
+    if the piece did en passant, need to add a pawn back

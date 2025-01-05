@@ -1,6 +1,4 @@
-RANKS = [8, 7, 6, 5, 4, 3, 2, 1]
-FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-
+from utils import RANKS, FILES, SQUARE_TO_NUM
 class Position:
     def __init__(self, num=0, pos=None):
         if num < 0 or num >= 64:
@@ -25,7 +23,7 @@ class Position:
             return None
         return Position(self.num + 1, self.pos << 1)
     def get_position(move: str):
-        return Position(num=(8 - int(move[1])) * 8 + ord(move[0]) - ord('a'))
+        return Position(num=SQUARE_TO_NUM[move])
     def overlap(self, mask: int) -> int:
         return self.pos & mask
     def rank(self) -> int:

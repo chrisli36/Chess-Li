@@ -3,7 +3,7 @@ from moves import *
 from enum import IntEnum, Enum
 from utils import *
 from magic import ROOK_MAGIC, QUEEN_MAGIC, BISHOP_MAGIC, KNIGHT_MAGIC
-from collections import defaultdict
+from typing import Optional
 
 ROOK_DIRECTIONS = [Position.up, Position.down, Position.right, Position.left]
 BISHOP_DIRECTIONS = [Position.up_left, Position.up_right, Position.down_right, Position.down_left]
@@ -12,9 +12,30 @@ KNIGHT_DIRECTIONS = [
     Position.down_left_left, Position.down_down_left, Position.up_left_left, Position.up_up_left
 ]
 
+PROMOTIONS = [Piece.QUEEN, Piece.ROOK, Piece.BISHOP, Piece.KNIGHT]
+
 class Turn(IntEnum):
     WHITE = 0
     BLACK = 1
+
+class GameState(Enum):
+    PLAYING = 0
+    WHITE = 1
+    DRAW = 2
+    BLACK = 3
+
+class StateChange(Enum):
+    PROMOTION = 0
+    PAWN_TWO = 1
+    EN_PASSANT = 2
+    K = 3
+    Q = 4
+    k = 5
+    q = 6
+    K_CASTLE = 7
+    Q_CASTLE = 8
+    k_CASTLE = 9
+    q_CASTLE = 10
 
 class DEFAULT(Enum):
     white_pieces = [
@@ -52,22 +73,29 @@ class Board:
         self.Q = Q
         self.k = k
         self.q = q
+
+        # internal variables that are adjusted each turn
         self.castle_king = 0
         self.castle_queen = 0
 
         self.pieces_mask = 0
         self.white_mask = 0
         self.black_mask = 0
+
         self.turn = turn
         self.friend = 0
         self.enemy = 0
-        self.friendly_list = None
+        self.friend_list = None
         self.enemy_list = None
-        self.pinned_limits = None
+
         self.all_moves = None
+        self.has_moves = None
+        self.pinned_limits = None
         self.en_passant = None
         self.attackers = None
-        self.has_moves = None
+
+        self.state_changes = None
+        self.game_state = GameState.PLAYING
 
         self.CALC_CONTROLLED_FNCS = [
             self._calc_pawn_controlled, 
@@ -136,10 +164,7 @@ class Board:
         piece_repr = piece % COLOR_DELIMITER if piece != Piece.EMPTY else len(representations) - 1
         return representations[piece_repr]
 
-    def _ensure_updated(self) -> None:
-        if self.updated:
-            return
-        
+    def _reset_state(self) -> None:
         self.white_mask = 0
         for p in self.white_pieces:
             self.white_mask |= p
@@ -152,18 +177,23 @@ class Board:
             self.friend = self.white_mask
             self.enemy = self.black_mask
             self.enemy_list = self.black_pieces
-            self.friendly_list = self.white_pieces
+            self.friend_list = self.white_pieces
             self.castle_king = self.K
             self.castle_queen = self.Q
         elif self.turn == Turn.BLACK:
             self.friend = self.black_mask
             self.enemy = self.white_mask
             self.enemy_list = self.white_pieces
-            self.friendly_list = self.black_pieces
+            self.friend_list = self.black_pieces
             self.castle_king = self.k
             self.castle_queen = self.q
-
         self.in_check = False
+
+    def _ensure_updated(self) -> None:
+        if self.updated:
+            return
+
+        self._reset_state()
         self.calculate_all_moves()
 
         self.updated = True
@@ -186,44 +216,39 @@ class Board:
             step = 9 * sign
         
         nums = range(attacker.num, king.num, step)
-        print("stop check", [Position(n) for n in nums])
         return sum([1 << n for n in nums])
-    
+
     def _update_pinned(self):
-        king_position = Position(ctzll(self.friendly_list[Piece.KING]))
+        king_position = Position(ctzll(self.friend_list[Piece.KING]))
         self.pinned_limits = dict()
 
-        bishops = self.enemy_list[Piece.BISHOP]
-        while bishops > 0:
-            bishop_position = Position(ctzll(bishops))
-            if BISHOP_MAGIC[bishop_position.num] & self.friendly_list[Piece.KING]:
-                sc = self._get_stop_check(king_position, bishop_position)
-                if (sc & self.enemy).bit_count() == 1 and (sc & self.friend).bit_count() == 1:
-                    self.pinned_limits[Position(ctzll(sc & self.friend))] = sc
-            bishops &= bishops - 1
-
-        rooks = self.enemy_list[Piece.ROOK]
-        while rooks > 0:
-            rook_position = Position(ctzll(rooks))
-            if ROOK_MAGIC[rook_position.num] & self.friendly_list[Piece.KING]:
-                sc = self._get_stop_check(king_position, rook_position)
-                if (sc & self.enemy).bit_count() == 1 and (sc & self.friend).bit_count() == 1:
-                    self.pinned_limits[Position(ctzll(sc & self.friend))] = sc
-            rooks &= rooks - 1
-        
-        queens = self.enemy_list[Piece.QUEEN]
-        while queens > 0:
-            queen_position = Position(ctzll(queens))
-            if QUEEN_MAGIC[queen_position.num] & self.friendly_list[Piece.KING]:
-                sc = self._get_stop_check(king_position, queen_position)
-                if (sc & self.enemy).bit_count() == 1 and (sc & self.friend).bit_count() == 1:
-                    self.pinned_limits[Position(ctzll(sc & self.friend))] = sc
-            queens &= queens - 1
+        # iterate through enemy 'piercing' pieces
+        for piece, piece_magic in zip([Piece.BISHOP, Piece.ROOK, Piece.QUEEN], [BISHOP_MAGIC, ROOK_MAGIC, QUEEN_MAGIC]):
+            p = self.enemy_list[piece]
+            while p > 0:
+                p_position = Position(ctzll(p))
+                # checks if the piece can see the king, ignoring pieces in the way
+                if piece_magic[p_position.num] & self.friend_list[Piece.KING]:
+                    sc = self._get_stop_check(king_position, p_position)
+                    # checks if there's 1 friend (the pinned piece) and 1 enemy (the piercing piece)
+                    if (sc & self.friend).bit_count() == 1 and (sc & self.enemy).bit_count() == 1:
+                        self.pinned_limits[Position(ctzll(sc & self.friend))] = sc
+                    # checks for the rare case where en passant is 
+                    # not allowed if two pawns are pinned horizontally
+                    elif (sc & self.friend).bit_count() == 1 and (sc & self.enemy).bit_count() == 2:
+                        enemy_pawn = sc & self.enemy & self.enemy_list[Piece.PAWN]
+                        friend_pawn = sc & self.friend & self.friend_list[Piece.PAWN]
+                        if enemy_pawn.bit_count() == 1 and friend_pawn.bit_count() == 1 \
+                                and (enemy_pawn == friend_pawn << 1 or enemy_pawn == friend_pawn >> 1):
+                            self.pinned_limits[Position(ctzll(friend_pawn))] = (friend_pawn << 8) + (friend_pawn >> 8)
+                            print("WOWWWW: limiting en passant power!")
+                p &= p - 1
 
     def calculate_all_moves(self) -> dict[Position, Moves]:
         if self.updated:
             return self.all_moves
-        
+        self._reset_state()
+
         # need to iterate through enemy pieces first to get controlled squares for king
         self.attackers = []
         self.controlled = 0
@@ -232,41 +257,43 @@ class Board:
             while pieces > 0:
                 fnc(Position(ctzll(pieces)))
                 pieces &= pieces - 1
-        
+
         # need to also iterate through enemy sights to get pinned pieces
         self._update_pinned()
-        for k, v in self.pinned_limits.items():
-            print(k, v)
 
         # now, iterate through own pieces to get valid moves
-        self.has_moves = False
         self.all_moves = dict()
-        for p, fnc in zip(self.friendly_list, self.CALC_MOVES_FNCS):
+        for p, fnc in zip(self.friend_list, self.CALC_MOVES_FNCS):
             pieces = p
             while pieces > 0:
                 start = Position(ctzll(pieces))
                 self.all_moves[start] = fnc(start)
-                if self.all_moves[start]:
-                    self.has_moves = True
                 pieces &= pieces - 1
 
         # not optimal, but if in check, filter out moves
         if len(self.attackers) == 1:
-            print("single check")
-            king_position = Position(ctzll(self.friendly_list[Piece.KING]))
+            king_position = Position(ctzll(self.friend_list[Piece.KING]))
             stop_check = self._get_stop_check(king_position, self.attackers[0])
             for s in self.all_moves.keys():
                 if s == king_position:
                     continue
                 self.all_moves[s].limit_with_mask(stop_check)
-
+        # if in double check, the king is forced to move
         elif len(self.attackers) >= 2: 
-            print("double check")
-            king_position = Position(ctzll(self.friendly_list[Piece.KING]))
+            king_position = Position(ctzll(self.friend_list[Piece.KING]))
             self.all_moves = {king_position: self.all_moves[king_position]}
 
+        # check for game end
+        self.has_moves = any(moves.mask for moves in self.all_moves.values())
         if not self.has_moves:
-            print(f"GAME OVER, {"WHITE" if self.turn else "BLACK"} wins!!!")
+            if self.attackers:
+                self.game_state = GameState.WHITE if self.turn else GameState.BLACK
+                print(f"""GAME OVER, {"WHITE" if self.turn else "BLACK"} wins!!!""")
+            else:
+                self.game_state = GameState.DRAW
+                print(f"""GAME OVER, DRAW.""")
+        
+        self.updated = True
         return self.all_moves
 
     def get_moves(self, position: Position) -> Moves:
@@ -286,7 +313,7 @@ class Board:
         for pawn_take in [pawn_take_left, pawn_take_right]:
             take = pawn_take(position)
             if take:
-                if take.overlap(self.friendly_list[Piece.KING]):
+                if take.overlap(self.friend_list[Piece.KING]):
                     self.attackers.append(position)
                 self.controlled |= take.pos
 
@@ -300,12 +327,15 @@ class Board:
             pawn_forward = Position.down
             pawn_take_left = Position.down_right
             pawn_take_right = Position.down_left
+        else:
+            print("error in _calc_pawn_moves! DJFKLJDSALKF")
         # calculate forward pawn moves
         forward = pawn_forward(position)
         if forward and not forward.overlap(self.pieces_mask):
             moves.update(forward)
             fforward = pawn_forward(forward)
-            if ((self.turn == Turn.WHITE and position.rank() == 2) or (self.turn == Turn.BLACK and position.rank() == 7)) \
+            if ((self.turn == Turn.WHITE and position.overlap(RANK[2])) \
+                    or (self.turn == Turn.BLACK and position.overlap(RANK[7]))) \
                     and fforward and not fforward.overlap(self.pieces_mask):
                 moves.update(fforward)
         # calculate taking on left and right
@@ -325,7 +355,7 @@ class Board:
         for dir in KNIGHT_DIRECTIONS:
             mv = dir(position)
             if mv:
-                if mv.overlap(self.friendly_list[Piece.KING]):
+                if mv.overlap(self.friend_list[Piece.KING]):
                     self.attackers.append(position)
                 self.controlled |= mv.pos
 
@@ -349,8 +379,8 @@ class Board:
         for dir in BISHOP_DIRECTIONS:
             mv = dir(position)
             # need to account for bishop piercing through the king
-            while mv and (not mv.overlap(self.pieces_mask) or mv.overlap(self.friendly_list[Piece.KING])):
-                if mv.overlap(self.friendly_list[Piece.KING]):
+            while mv and (not mv.overlap(self.pieces_mask) or mv.overlap(self.friend_list[Piece.KING])):
+                if mv.overlap(self.friend_list[Piece.KING]):
                     self.attackers.append(position)
                 self.controlled |= mv.pos
                 mv = dir(mv)
@@ -371,13 +401,13 @@ class Board:
         if position in self.pinned_limits:
             moves.limit_with_mask(self.pinned_limits[position])
         return moves
-    
+
     def _calc_rook_controlled(self, position: Position) -> None:
         for dir in ROOK_DIRECTIONS:
             mv = dir(position)
             # need to account for rook piercing through the king
-            while mv and (not mv.overlap(self.pieces_mask) or mv.overlap(self.friendly_list[Piece.KING])):
-                if mv.overlap(self.friendly_list[Piece.KING]):
+            while mv and (not mv.overlap(self.pieces_mask) or mv.overlap(self.friend_list[Piece.KING])):
+                if mv.overlap(self.friend_list[Piece.KING]):
                     self.attackers.append(position)
                 self.controlled |= mv.pos
                 mv = dir(mv)
@@ -394,7 +424,7 @@ class Board:
                 mv = dir(mv)
             # if there's an enemy piece at the end, then we could take
             if mv and mv.overlap(self.enemy):
-                moves.udpate(mv)
+                moves.update(mv)
         if position in self.pinned_limits:
             moves.limit_with_mask(self.pinned_limits[position])
         return moves
@@ -403,8 +433,8 @@ class Board:
         for dir in ROOK_DIRECTIONS + BISHOP_DIRECTIONS:
             mv = dir(position)
             # need to account for queen piercing through the king
-            while mv and (not mv.overlap(self.pieces_mask) or mv.overlap(self.friendly_list[Piece.KING])):
-                if mv.overlap(self.friendly_list[Piece.KING]):
+            while mv and (not mv.overlap(self.pieces_mask) or mv.overlap(self.friend_list[Piece.KING])):
+                if mv.overlap(self.friend_list[Piece.KING]):
                     self.attackers.append(position)
                 self.controlled |= mv.pos
                 mv = dir(mv)
@@ -451,57 +481,164 @@ class Board:
             moves.update(castle_queenside)
         return moves
 
-    def make_move(self, s: Position, e: Position, piece: Piece, promotion: Piece=None):
+    def is_promoting(self, s: Position, e: Position) -> bool:
+        self._ensure_updated()
+        is_pawn_move = e.overlap(self.get_moves(s).mask) and s.overlap(self.pieces_list[self.turn][Piece.PAWN])
+        is_promoting = e.overlap(RANK[1]) or e.overlap(RANK[8])
+        return is_pawn_move and is_promoting
+
+    def rook_disables_castling(self, pos: Position) -> list[StateChange]:
+        state_changes = list()
+        if pos.overlap(SQUARE_TO_POS['a1'] | SQUARE_TO_POS['h1'] | SQUARE_TO_POS['a8'] | SQUARE_TO_POS['h8']):
+            if pos.overlap(SQUARE_TO_POS['a1']) and self.Q:
+                self.Q = 0
+                state_changes.append(StateChange.Q)
+            elif pos.overlap(SQUARE_TO_POS['h1']) and self.K:
+                self.K = 0
+                state_changes.append(StateChange.K)
+            elif pos.overlap(SQUARE_TO_POS['a8']) and self.q:
+                self.q = 0
+                state_changes.append(StateChange.q)
+            elif pos.overlap(SQUARE_TO_POS['h8']) and self.k:
+                self.k = 0
+                state_changes.append(StateChange.k)
+        return state_changes
+
+    def make_move(self, s: Position, e: Position, piece: Piece, promotion: Piece=None) -> tuple[Optional[Piece], list[StateChange]]:
         self._ensure_updated()
         if e.overlap(self.get_moves(s).mask):
-            # make the move of original piece
-            self.friendly_list[piece] &= ~s.pos
-            self.friendly_list[piece] |= e.pos
+            taken = None
+            state_changes = list()
 
             # erase taken square if we're taking a piece
             if e.overlap(self.enemy):
                 for i in range(COLOR_DELIMITER):
-                    self.enemy_list[i] &= ~e.pos
+                    if self.enemy_list[i] & e.pos:
+                        self.enemy_list[i] &= ~e.pos
+                        taken = Piece(i)
+                        break
+                # if we're taking a piece in a rook corner, disable castling rights for that side
+                state_changes.extend(self.rook_disables_castling(e))
 
-            # if we're moving a pawn, consider en passant or promotion
-            self.en_passant = None
-            if s.overlap(self.white_pieces[Piece.PAWN] | self.black_pieces[Piece.PAWN]):
+            # if we're moving a pawn, consider en passant
+            # Note: if en passant, taken=None and StateChange.EN_PASSANT is added instead
+            if s.overlap(self.pieces_list[self.turn][Piece.PAWN]):
                 # if pawn is moving two squares, then enable en passant
                 if (s.overlap(RANK[2]) and e.overlap(RANK[4])) or (s.overlap(RANK[7]) and e.overlap(RANK[5])):
                     self.en_passant = e.down() if self.turn == Turn.WHITE else e.up()
+                    state_changes.append(StateChange.PAWN_TWO)
                 # if the pawn is taking en passant, erase the pawn that was en passanted
-                if self.en_passant and e.overlap(self.en_passant.pos):
+                elif self.en_passant and e == self.en_passant:
                     taken_pawn = e.down() if self.turn == Turn.WHITE else e.up()
                     self.enemy_list[Piece.PAWN] &= ~taken_pawn.pos
-                # if pawn is being promoted, need to overwrite with promoted piece
-                if (s.overlap(RANK[7]) and e.overlap(RANK[8])) or (s.overlap(RANK[2]) and e.overlap(RANK[1])):
-                    self.friendly_list[piece] &= ~e.pos
-                    self.friendly_list[promotion] |= e.pos
+                    state_changes.append(StateChange.EN_PASSANT)
+                    self.en_passant = None
+                else:
+                    self.en_passant = None
+            else:
+                self.en_passant = None
+            
+            # if a rook is moved, disable casting rights for that side
+            if s.overlap(self.pieces_list[self.turn][Piece.ROOK]):
+                state_changes.extend(self.rook_disables_castling(s))
 
             # if the king is moving two squares, then we're castling
-            if s.overlap(self.white_pieces[Piece.KING] | self.black_pieces[Piece.KING]):
+            if s.overlap(self.pieces_list[self.turn][Piece.KING]):
                 diff = e.num - s.num
+                # king side castling
                 if diff == 2:
-                    self.friendly_list[Piece.ROOK] &= ~e.right().pos
-                    self.friendly_list[Piece.ROOK] |= e.left().pos
+                    self.friend_list[Piece.ROOK] &= ~e.right().pos
+                    self.friend_list[Piece.ROOK] |= e.left().pos
+                    if self.turn == Turn.WHITE:
+                        state_changes.append(StateChange.K_CASTLE)
+                    elif self.turn == Turn.BLACK:
+                        state_changes.append(StateChange.k_CASTLE)
+                # queen side castling
                 elif diff == -2:
-                    self.friendly_list[Piece.ROOK] &= ~e.left().left().pos
-                    self.friendly_list[Piece.ROOK] |= e.right().pos
+                    self.friend_list[Piece.ROOK] &= ~e.left().left().pos
+                    self.friend_list[Piece.ROOK] |= e.right().pos
+                    if self.turn == Turn.WHITE:
+                        state_changes.append(StateChange.Q_CASTLE)
+                    elif self.turn == Turn.BLACK:
+                        state_changes.append(StateChange.q_CASTLE)
+
                 # since the king was moved, disable castling rights
                 if self.turn == Turn.WHITE:
-                    self.K = 0
-                    self.Q = 0
+                    if self.K:
+                        self.K = 0
+                        state_changes.append(StateChange.K)
+                    if self.Q:
+                        self.Q = 0
+                        state_changes.append(StateChange.Q)
                 elif self.turn == Turn.BLACK:
-                    self.k = 0
-                    self.q = 0
+                    if self.k:
+                        self.k = 0
+                        state_changes.append(StateChange.k)
+                    if self.q:
+                        self.q = 0
+                        state_changes.append(StateChange.q)
+
+            # make the move of original piece
+            self.friend_list[piece] &= ~s.pos
+            self.friend_list[piece] |= e.pos
+
+            # if pawn is being promoted, need to overwrite with promoted piece
+            if e.overlap(self.pieces_list[self.turn][Piece.PAWN]) and (e.overlap(RANK[8]) or e.overlap(RANK[1])):
+                self.friend_list[piece] &= ~e.pos
+                self.friend_list[promotion] |= e.pos
+                state_changes.append(StateChange.PROMOTION)
 
             self.turn = 1 - self.turn
             self.updated = False
+
+            return taken, state_changes
         else:
+            print(self)
+            print(self.calculate_all_moves())
             print(f"{s} to {e} is not a move!")
+
+    def undo_move(self, s: Position, e: Position, piece: Piece, taken: Optional[Piece], state_changes: list[StateChange]) -> None:
+        # undo move of piece
+        self.turn = 1 - self.turn
+        self.pieces_list[self.turn][piece] &= ~e.pos
+        self.pieces_list[self.turn][piece] |= s.pos
+
+        # if a piece was taken, bring it back
+        if taken is not None:
+            self.pieces_list[1 - self.turn][taken] |= e.pos
+
+        # account for special cases
+        for sc in state_changes:
+            if sc == StateChange.PAWN_TWO:
+                self.en_passant = None
+            elif sc == StateChange.EN_PASSANT:
+                taken_pawn = e.down() if self.turn == Turn.WHITE else e.up()
+                self.pieces_list[1 - self.turn][Piece.PAWN] |= taken_pawn.pos
+                self.en_passant = e
+            elif sc == StateChange.PROMOTION:
+                for promo in PROMOTIONS:
+                    self.pieces_list[self.turn][promo] &= ~e.pos
+            elif sc == StateChange.K:
+                self.K = DEFAULT.K.value
+            elif sc == StateChange.Q:
+                self.Q = DEFAULT.Q.value
+            elif sc == StateChange.k:
+                self.k = DEFAULT.k.value
+            elif sc == StateChange.q:
+                self.q = DEFAULT.q.value
+            elif sc == StateChange.K_CASTLE or sc == StateChange.k_CASTLE:
+                self.pieces_list[self.turn][Piece.ROOK] |= e.right().pos
+                self.pieces_list[self.turn][Piece.ROOK] &= ~e.left().pos
+            elif sc == StateChange.Q_CASTLE or sc == StateChange.q_CASTLE:
+                self.pieces_list[self.turn][Piece.ROOK] |= e.left().left().pos
+                self.pieces_list[self.turn][Piece.ROOK] &= ~e.right().pos
+
+        self.updated = False
 
 if __name__=="__main__":
     board = Board()
     print(board)
     board.make_move(Position.get_position("e2"), Position.get_position("e4"), Piece.PAWN)
+    print(board)
+    board.undo_move(Position.get_position("e2"), Position.get_position("e4"), Piece.PAWN, None, [])
     print(board)
