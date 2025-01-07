@@ -1,4 +1,5 @@
 from utils import RANKS, FILES, SQUARE_TO_NUM
+
 class Position:
     def __init__(self, num=0, pos=None):
         if num < 0 or num >= 64:

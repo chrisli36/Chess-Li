@@ -1,5 +1,5 @@
 from position import Position
-from utils import Piece, ctzll
+from utils import Piece, ctzll_iterator
 
 class Moves:
     def __init__(self, mask:int=0, piece:Piece=None):
@@ -7,10 +7,8 @@ class Moves:
         self.piece = piece
     def __str__(self):
         s = f"{self.piece}"
-        m = self.mask
-        while m > 0:
-            s += f" move to {Position(num=ctzll(m))},"
-            m &= m - 1
+        for n in ctzll_iterator(self.mask):
+            s += f" moves to {Position(n)};"
         return s
     def __repr__(self):
         return self.__str__()
