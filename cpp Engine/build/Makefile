@@ -177,30 +177,6 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-src/piece.o: src/piece.cpp.o
-.PHONY : src/piece.o
-
-# target to build an object file
-src/piece.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/piece.cpp.o
-.PHONY : src/piece.cpp.o
-
-src/piece.i: src/piece.cpp.i
-.PHONY : src/piece.i
-
-# target to preprocess a source file
-src/piece.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/piece.cpp.i
-.PHONY : src/piece.cpp.i
-
-src/piece.s: src/piece.cpp.s
-.PHONY : src/piece.s
-
-# target to generate assembly for a file
-src/piece.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/piece.cpp.s
-.PHONY : src/piece.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -216,9 +192,6 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/piece.o"
-	@echo "... src/piece.i"
-	@echo "... src/piece.s"
 .PHONY : help
 
 

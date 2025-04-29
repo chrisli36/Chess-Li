@@ -812,4 +812,6 @@ CMakeFiles/chessli.dir/src/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/endian.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/has_single_bit.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/array \
-  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp

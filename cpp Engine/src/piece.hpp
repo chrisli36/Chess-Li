@@ -1,9 +1,8 @@
-#ifndef PIECE_HPP
-#define PIECE_HPP
+#pragma once
+#include <cstdint>
 
-class Piece {
-public:
-    enum PieceType {
+struct Piece {
+    enum PieceType : uint8_t {
         EMPTY  = 0,
         PAWN   = 1,
         KNIGHT = 2,
@@ -28,7 +27,22 @@ public:
         BLACK_KING   = KING   | BLACK
     };
 
-    static PieceType fen_to_piece(char c) {
+    PieceType type;
+
+    /**
+     * @brief Constructs a new Piece object.
+     * 
+     * @param t The type of the piece (e.g., WHITE_PAWN, BLACK_KNIGHT)
+     */
+    constexpr Piece(PieceType t = EMPTY) : type(t) {}
+
+    /**
+     * @brief  Converts a FEN character into a Piece.
+     * 
+     * @param c the FEN character (e.g., 'p', 'K')
+     * @return A Piece corresponding to the FEN character.
+     */
+    static constexpr Piece from_fen(char c) {
         switch (c) {
             case 'p': return PieceType(PAWN | BLACK);
             case 'n': return PieceType(KNIGHT | BLACK);
@@ -46,12 +60,15 @@ public:
         }
     }
 
-    static char piece_to_str(PieceType c) {
-        return pieces[c & 0x7] + ((c & BLACK) ? 'a' - 'A' : 0);
+    static constexpr char representations[7] = {'.', 'P', 'N', 'B', 'R', 'Q', 'K'};
+
+    /**
+     * Converts this Piece into its FEN character.
+     *
+     * @return The FEN character representing this piece (e.g., 'p', 'N').
+     */
+    constexpr char to_char() const {
+        if (type == EMPTY) return '.';
+        return representations[type & 0x7] + ((type & BLACK) ? 'a' - 'A' : 0);
     }
-
-private:
-    static const char pieces[7];
 };
-
-#endif // PIECE_HPP

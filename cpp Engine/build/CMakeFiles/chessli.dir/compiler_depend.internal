@@ -960,7 +960,9 @@ CMakeFiles/chessli.dir/src/board.cpp.o
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/bitboard.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.hpp
+ /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/castling_rights.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/piece.hpp
 
 CMakeFiles/chessli.dir/src/main.cpp.o
@@ -1776,10 +1778,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/bitboard.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.hpp
- /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/piece.hpp
-
-CMakeFiles/chessli.dir/src/piece.cpp.o
- /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/piece.cpp
+ /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/castling_rights.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/piece.hpp
 

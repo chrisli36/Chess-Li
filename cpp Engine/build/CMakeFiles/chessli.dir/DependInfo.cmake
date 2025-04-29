@@ -10,7 +10,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp" "CMakeFiles/chessli.dir/src/board.cpp.o" "gcc" "CMakeFiles/chessli.dir/src/board.cpp.o.d"
   "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/main.cpp" "CMakeFiles/chessli.dir/src/main.cpp.o" "gcc" "CMakeFiles/chessli.dir/src/main.cpp.o.d"
-  "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/piece.cpp" "CMakeFiles/chessli.dir/src/piece.cpp.o" "gcc" "CMakeFiles/chessli.dir/src/piece.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

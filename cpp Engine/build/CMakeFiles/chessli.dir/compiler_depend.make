@@ -959,7 +959,9 @@ CMakeFiles/chessli.dir/src/board.cpp.o: /Users/christopherli/Documents/Junior/Ch
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/board.hpp \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp
 
 CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/main.cpp \
@@ -1774,14 +1776,15 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/board.hpp \
-  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp
-
-CMakeFiles/chessli.dir/src/piece.cpp.o: /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.cpp \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp
 
 
 /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/main.cpp:
+
+/Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h:
 
@@ -2270,6 +2273,8 @@ CMakeFiles/chessli.dir/src/piece.cpp.o: /Users/christopherli/Documents/Junior/Ch
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/deque:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_types.h:
+
+/Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/unreachable.h:
 
@@ -3028,8 +3033,6 @@ CMakeFiles/chessli.dir/src/piece.cpp.o: /Users/christopherli/Documents/Junior/Ch
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/replace_if.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:
-
-/Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.cpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_make_heap.h:
 
