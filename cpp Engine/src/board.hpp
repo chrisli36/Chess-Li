@@ -5,6 +5,8 @@
 #include "piece.hpp"
 #include "bitboard.hpp"
 #include "castling_rights.hpp"
+#include "turn.hpp"
+#include "move.hpp"
 
 class Board {
 public:
@@ -21,7 +23,15 @@ public:
      */
     void print() const;
 
+    /**
+     * @brief Calculates valid moves for the current position.
+     * 
+     * @return A vector of valid moves.
+     */
+    std::vector<Move> get_moves() const;
+
 private:
+    // VARIABLES
     // board state variables
     Piece squares[64];
     Bitboard piece_bitboards[2][6];
@@ -29,15 +39,18 @@ private:
     Bitboard all_pieces_bitboard;
     CastlingRights castling_rights;
 
-    enum Turn : uint8_t {
-        WHITE = 0,
-        BLACK = 1
-    } turn;
-
+    Turn turn;
     Bitboard en_passant_square;
 
     // turn specific variables
-    int* castle_king, castle_queen;
-    Bitboard* friends, enemies;
-    Bitboard* friend_arr, enemy_arr;
+    bool inited = false;
+    bool castle_king, castle_queen;
+    Bitboard* friends;
+    Bitboard* enemies;
+    Bitboard (*friend_arr)[6];
+    Bitboard (*enemy_arr)[6];
+
+    // METHODS
+    void reset();
+    void update_turn();
 };

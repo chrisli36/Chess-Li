@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "move.hpp"
 
 struct Piece {
     enum PieceType : uint8_t {
@@ -25,9 +26,11 @@ struct Piece {
         BLACK_ROOK   = ROOK   | BLACK,
         BLACK_QUEEN  = QUEEN  | BLACK,
         BLACK_KING   = KING   | BLACK
-    };
+    } type;
 
-    PieceType type;
+    static constexpr uint8_t PIECE_MASK = 0b111;
+    static constexpr uint8_t WHITE_MASK = 0b1000;
+    static constexpr uint8_t BLACK_MASK = 0b10000;
 
     /**
      * @brief Constructs a new Piece object.
@@ -35,6 +38,39 @@ struct Piece {
      * @param t The type of the piece (e.g., WHITE_PAWN, BLACK_KNIGHT)
      */
     constexpr Piece(PieceType t = EMPTY) : type(t) {}
+
+    /**
+     * @brief Resets the piece to EMPTY.
+     * 
+     */
+    constexpr void reset() { type = EMPTY; }
+
+    /**
+     * @brief Gets the PieceType as an integer.
+     * 
+     */
+    constexpr uint8_t get_piece_int() const { return static_cast<uint8_t>(type) & PIECE_MASK; }
+
+    /** 
+     * @brief Gets PieceType of this piece.
+     * 
+     * @return The PieceType of this piece.
+     */
+    constexpr PieceType get_piece() const { return static_cast<PieceType>(get_piece_int()); }
+
+    /**
+     * @brief Gets the color of this piece as an integer.
+     * 
+     * @return The color of this piece (0 for WHITE, 1 for BLACK).
+     */
+    constexpr uint8_t get_color_int() const { return static_cast<uint8_t>(type) & BLACK_MASK > 0; }
+
+    /** 
+     * @brief Gets the color of this piece.
+     * 
+     * @return The color of this piece (WHITE or BLACK).
+     */
+    constexpr Turn get_color() const { return static_cast<Turn>(get_color_int()); }
 
     /**
      * @brief  Converts a FEN character into a Piece.
@@ -61,7 +97,6 @@ struct Piece {
     }
 
     static constexpr char representations[7] = {'.', 'P', 'N', 'B', 'R', 'Q', 'K'};
-
     /**
      * Converts this Piece into its FEN character.
      *

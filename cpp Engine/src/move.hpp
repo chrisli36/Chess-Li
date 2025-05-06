@@ -5,17 +5,15 @@
 #include "piece.hpp"
 
 enum class MoveFlag : uint8_t {
-    NO_FLAG          = 0,
-    CAPTURE          = 1,
-    EN_PASSANT       = 2,
-    CHECK            = 3,
-    CHECKMATE        = 4,
-    CASTLE_KINGSIDE  = 5,
-    CASTLE_QUEENSIDE = 6,
-    QUEEN_PROMOTION  = 8,
-    ROOK_PROMOTION   = 9,
-    BISHOP_PROMOTION = 10,
-    KNIGHT_PROMOTION = 11
+    NO_FLAG             = 0,
+    EN_PASSANT_CAPTURE  = 1,
+    PAWN_UP_TWO         = 2,
+    CASTLE_KINGSIDE     = 3,
+    CASTLE_QUEENSIDE    = 4,
+    QUEEN_PROMOTION     = 5,
+    ROOK_PROMOTION      = 6,
+    BISHOP_PROMOTION    = 7,
+    KNIGHT_PROMOTION    = 8,
 };
 
 struct Move {
@@ -40,11 +38,8 @@ struct Move {
     constexpr MoveFlag flag() const { return static_cast<MoveFlag>((move >> 12) & static_cast<uint16_t>(FLAG_MASK)); }
 
     // Queries
-    constexpr bool is_capture() const { return flag() == MoveFlag::CAPTURE; }
-    constexpr bool is_en_passant() const { return flag() == MoveFlag::EN_PASSANT; }
-    constexpr bool is_check() const { return flag() == MoveFlag::CHECK; }
-    constexpr bool is_checkmate() const { return flag() == MoveFlag::CHECKMATE; }
-
+    constexpr bool is_en_passant() const { return flag() == MoveFlag::EN_PASSANT_CAPTURE; }
+    constexpr bool is_pawn_up_two() const { return flag() == MoveFlag::PAWN_UP_TWO; }
     constexpr bool is_castle() const { return flag() == MoveFlag::CASTLE_KINGSIDE || flag() == MoveFlag::CASTLE_QUEENSIDE; }
     constexpr bool is_castle_kingside() const { return flag() == MoveFlag::CASTLE_KINGSIDE; }
     constexpr bool is_castle_queenside() const { return flag() == MoveFlag::CASTLE_QUEENSIDE; }

@@ -3,8 +3,11 @@
 #include <iomanip>
 
 Board::Board(const std::string fen) {
+    reset();
+
     // set board pieces
     int i = 0, sq = 0;
+    Piece piece;
     for (char c : fen) {
         i++;
         if (sq == 64) {
@@ -19,7 +22,11 @@ Board::Board(const std::string fen) {
             }
             sq += (c - '0');
         } else {
-            squares[sq] = Piece::from_fen(c);
+            piece = Piece::from_fen(c);
+            squares[sq] = piece;
+            piece_bitboards[piece.get_color_int()][piece.get_piece_int()].add_square(sq);
+            color_bitboards[piece.get_color_int()].add_square(sq);
+            all_pieces_bitboard.add_square(sq);
             sq++;
         }
     }
@@ -52,6 +59,31 @@ Board::Board(const std::string fen) {
     }
 }
 
+void Board::reset() {
+    for (int i = 0; i < 64; ++i) {
+        squares[i].reset();
+    }
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 6; ++j) {
+            piece_bitboards[i][j].reset();
+        }
+        color_bitboards[i].reset();
+    }
+    all_pieces_bitboard.reset();
+    castling_rights = CastlingRights();
+    turn = Turn::WHITE;
+    en_passant_square.reset();
+}
+
+void Board::update_turn() {
+    castle_king = (turn == Turn::WHITE) ? castling_rights.can_castle(CastlingRights::K) : castling_rights.can_castle(CastlingRights::k);
+    castle_queen = (turn == Turn::WHITE) ? castling_rights.can_castle(CastlingRights::Q) : castling_rights.can_castle(CastlingRights::q);
+    friends = &color_bitboards[turn];
+    enemies = &color_bitboards[turn];
+    friend_arr = &piece_bitboards[turn];
+    enemy_arr = &piece_bitboards[turn];
+}
+
 void Board::print() const {
     for (int rank = 0; rank < 8; ++rank) {
         std::cout << "  " << std::string(33, '-') << "\n";
@@ -81,4 +113,10 @@ void Board::print() const {
     std::cout << "\n";
 }
 
+std::vector<Move> Board::get_moves() const {
+    std::vector<Move> moves;
 
+
+
+    return moves;
+}

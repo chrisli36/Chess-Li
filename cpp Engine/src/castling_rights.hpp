@@ -10,7 +10,7 @@ struct CastlingRights {
     static constexpr uint8_t q = 1 << 3;
 
     /**
-     * @brief Constructs a new CastlingRights object.
+     * @brief Constructs a new CastlingRights struct.
      * 
      */
     constexpr CastlingRights(uint8_t r = 0) : rights(r) {}
