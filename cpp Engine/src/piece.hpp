@@ -45,32 +45,19 @@ struct Piece {
      */
     constexpr void reset() { type = EMPTY; }
 
-    /**
-     * @brief Gets the PieceType as an integer.
-     * 
-     */
-    constexpr uint8_t get_piece_int() const { return static_cast<uint8_t>(type) & PIECE_MASK; }
-
     /** 
      * @brief Gets PieceType of this piece.
      * 
      * @return The PieceType of this piece.
      */
-    constexpr PieceType get_piece() const { return static_cast<PieceType>(get_piece_int()); }
-
-    /**
-     * @brief Gets the color of this piece as an integer.
-     * 
-     * @return The color of this piece (0 for WHITE, 1 for BLACK).
-     */
-    constexpr uint8_t get_color_int() const { return static_cast<uint8_t>(type) & BLACK_MASK > 0; }
+    constexpr PieceType get_piece() const { return static_cast<PieceType>(type & PIECE_MASK); }
 
     /** 
      * @brief Gets the color of this piece.
      * 
      * @return The color of this piece (WHITE or BLACK).
      */
-    constexpr Turn get_color() const { return static_cast<Turn>(get_color_int()); }
+    constexpr Turn get_color() const { return static_cast<Turn>(type & BLACK_MASK > 0); }
 
     /**
      * @brief  Converts a FEN character into a Piece.

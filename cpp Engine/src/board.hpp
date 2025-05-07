@@ -50,7 +50,16 @@ private:
     Bitboard (*friend_arr)[6];
     Bitboard (*enemy_arr)[6];
 
+    std::vector<Move> moves;
+
     // METHODS
     void reset();
     void update_turn();
+    bool is_valid_fr(const int file, const int rank) const;
+
+    static constexpr int KNIGHT_DIRECTIONS[8][2] = {
+        { 1,  2}, { 2,  1}, { 2, -1}, { 1, -2},
+        {-1, -2}, {-2, -1}, {-2,  1}, {-1,  2}
+    };
+    void knight_moves(const uint8_t sq);
 };

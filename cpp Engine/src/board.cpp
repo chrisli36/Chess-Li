@@ -24,8 +24,8 @@ Board::Board(const std::string fen) {
         } else {
             piece = Piece::from_fen(c);
             squares[sq] = piece;
-            piece_bitboards[piece.get_color_int()][piece.get_piece_int()].add_square(sq);
-            color_bitboards[piece.get_color_int()].add_square(sq);
+            piece_bitboards[piece.get_color()][piece.get_piece()].add_square(sq);
+            color_bitboards[piece.get_color()].add_square(sq);
             all_pieces_bitboard.add_square(sq);
             sq++;
         }
@@ -84,6 +84,10 @@ void Board::update_turn() {
     enemy_arr = &piece_bitboards[turn];
 }
 
+bool Board::is_valid_fr(const int file, const int rank) const {
+    return (file >= 0 && file < 8 && rank >= 0 && rank < 8);
+}
+
 void Board::print() const {
     for (int rank = 0; rank < 8; ++rank) {
         std::cout << "  " << std::string(33, '-') << "\n";
@@ -114,9 +118,24 @@ void Board::print() const {
 }
 
 std::vector<Move> Board::get_moves() const {
-    std::vector<Move> moves;
-
-
+    for (int i = 0; i < 6; i++) {
+    }
 
     return moves;
+}
+
+void Board::knight_moves(const uint8_t sq) {
+    const int rank = sq / 8;
+    const int file = sq % 8;
+    int new_rank, new_file, new_sq;
+    for (auto& dir : KNIGHT_DIRECTIONS) {
+        new_rank = rank + dir[0];
+        new_file = file + dir[1];
+        if (is_valid_fr(new_file, new_rank)) {
+            new_sq = new_rank * 8 + new_file;
+            if (squares[new_sq].get_color() != turn) {
+                moves.push_back(Move(sq, new_sq));
+            }
+        }
+    }
 }

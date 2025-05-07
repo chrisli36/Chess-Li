@@ -4,7 +4,7 @@
 
 #include "piece.hpp"
 
-enum class MoveFlag : uint8_t {
+enum MoveFlag : uint8_t {
     NO_FLAG             = 0,
     EN_PASSANT_CAPTURE  = 1,
     PAWN_UP_TWO         = 2,
@@ -26,11 +26,10 @@ struct Move {
 
     // Constructors
     constexpr Move(uint16_t m = 0) : move(m) {}
-
     constexpr Move(uint8_t start, uint8_t end, MoveFlag flag = MoveFlag::NO_FLAG)
         : move(static_cast<uint16_t>(start & START_MASK) |
                (static_cast<uint16_t>(end & END_MASK) << 6) |
-               (static_cast<uint16_t>(static_cast<uint8_t>(flag) & FLAG_MASK) << 12)) {}
+               (static_cast<uint16_t>(flag & FLAG_MASK) << 12)) {}
 
     // Accessors
     constexpr uint8_t start() const { return static_cast<uint8_t>(move & static_cast<uint16_t>(START_MASK)); }
@@ -44,8 +43,8 @@ struct Move {
     constexpr bool is_castle_kingside() const { return flag() == MoveFlag::CASTLE_KINGSIDE; }
     constexpr bool is_castle_queenside() const { return flag() == MoveFlag::CASTLE_QUEENSIDE; }
 
-    static constexpr uint8_t FIRST_PROMOTION_FLAG = static_cast<uint8_t>(MoveFlag::QUEEN_PROMOTION);
-    constexpr bool is_promotion() const { return static_cast<uint8_t>(flag()) >= FIRST_PROMOTION_FLAG; }
+    static constexpr uint8_t FIRST_PROMOTION_FLAG = MoveFlag::QUEEN_PROMOTION;
+    constexpr bool is_promotion() const { return flag() >= FIRST_PROMOTION_FLAG; }
     constexpr Piece promotion_piece() const {
         switch (flag()) {
             case MoveFlag::QUEEN_PROMOTION:  return Piece::WHITE_QUEEN;
