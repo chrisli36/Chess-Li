@@ -1,16 +1,17 @@
 #pragma once
 #include <cstdint>
-#include "move.hpp"
+
+#include "turn.hpp"
 
 struct Piece {
     enum PieceType : uint8_t {
-        EMPTY  = 0,
-        PAWN   = 1,
-        KNIGHT = 2,
-        BISHOP = 3,
-        ROOK   = 4,
-        QUEEN  = 5,
-        KING   = 6,
+        PAWN   = 0,
+        KNIGHT = 1,
+        BISHOP = 2,
+        ROOK   = 3,
+        QUEEN  = 4,
+        KING   = 5,
+        EMPTY  = 6,
         WHITE  = 1 << 3,
         BLACK  = 1 << 4,
 
@@ -57,7 +58,7 @@ struct Piece {
      * 
      * @return The color of this piece (WHITE or BLACK).
      */
-    constexpr Turn get_color() const { return static_cast<Turn>(type & BLACK_MASK > 0); }
+    constexpr Turn get_color() const { return static_cast<Turn>((type & BLACK_MASK) > 0); }
 
     /**
      * @brief  Converts a FEN character into a Piece.
@@ -83,7 +84,7 @@ struct Piece {
         }
     }
 
-    static constexpr char representations[7] = {'.', 'P', 'N', 'B', 'R', 'Q', 'K'};
+    static constexpr char representations[7] = {'P', 'N', 'B', 'R', 'Q', 'K', '.'};
     /**
      * Converts this Piece into its FEN character.
      *

@@ -37,9 +37,10 @@ struct Move {
     constexpr MoveFlag flag() const { return static_cast<MoveFlag>((move >> 12) & static_cast<uint16_t>(FLAG_MASK)); }
 
     // Queries
+    constexpr bool is_no_flag() const { return flag() == MoveFlag::NO_FLAG; }
     constexpr bool is_en_passant() const { return flag() == MoveFlag::EN_PASSANT_CAPTURE; }
     constexpr bool is_pawn_up_two() const { return flag() == MoveFlag::PAWN_UP_TWO; }
-    constexpr bool is_castle() const { return flag() == MoveFlag::CASTLE_KINGSIDE || flag() == MoveFlag::CASTLE_QUEENSIDE; }
+    constexpr bool is_castle() const { return is_castle_kingside() || is_castle_queenside(); }
     constexpr bool is_castle_kingside() const { return flag() == MoveFlag::CASTLE_KINGSIDE; }
     constexpr bool is_castle_queenside() const { return flag() == MoveFlag::CASTLE_QUEENSIDE; }
 

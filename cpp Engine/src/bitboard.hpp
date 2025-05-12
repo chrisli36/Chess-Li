@@ -1,5 +1,9 @@
 #pragma once
 #include <cstdint>
+#include <iostream>
+#include <bitset>
+
+#define CTZLL_ITERATOR(sq, bb) for (uint64_t _bb = (bb); _bb && ((sq) = __builtin_ctzll(_bb), true); _bb &= _bb - 1)
 
 struct Bitboard {
     uint64_t bitboard;
@@ -73,5 +77,21 @@ struct Bitboard {
      */
     constexpr void add_square(uint8_t sq) {
         bitboard |= (1ULL << sq);
+    }
+
+    /**
+     * @brief prints the bitboard as a 8x8 grid.
+     * 
+     */
+    void print() {
+        std::bitset<64> bits(bitboard);
+
+        for (int row = 0; row < 8; ++row) {
+            for (int col = 0; col < 8; ++col) {
+                int bit_index = 63 - (row * 8 + col);
+                std::cout << bits[bit_index];
+            }
+            std::cout << '\n';
+        }
     }
 };

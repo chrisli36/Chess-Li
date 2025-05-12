@@ -6,7 +6,7 @@ Board::Board(const std::string fen) {
     reset();
 
     // set board pieces
-    int i = 0, sq = 0;
+    int i = 0, sq = 0, real_sq;
     Piece piece;
     for (char c : fen) {
         i++;
@@ -22,11 +22,12 @@ Board::Board(const std::string fen) {
             }
             sq += (c - '0');
         } else {
+            real_sq = (7 - sq / 8) * 8 + (sq % 8);
             piece = Piece::from_fen(c);
-            squares[sq] = piece;
-            piece_bitboards[piece.get_color()][piece.get_piece()].add_square(sq);
-            color_bitboards[piece.get_color()].add_square(sq);
-            all_pieces_bitboard.add_square(sq);
+            squares[real_sq] = piece;
+            piece_bitboards[piece.get_color()][piece.get_piece()].add_square(real_sq);
+            color_bitboards[piece.get_color()].add_square(real_sq);
+            all_pieces_bitboard.add_square(real_sq);
             sq++;
         }
     }
@@ -57,6 +58,8 @@ Board::Board(const std::string fen) {
     } else {
         en_passant_square = Bitboard(0);
     }
+
+    update_turn();
 }
 
 void Board::reset() {
@@ -79,9 +82,9 @@ void Board::update_turn() {
     castle_king = (turn == Turn::WHITE) ? castling_rights.can_castle(CastlingRights::K) : castling_rights.can_castle(CastlingRights::k);
     castle_queen = (turn == Turn::WHITE) ? castling_rights.can_castle(CastlingRights::Q) : castling_rights.can_castle(CastlingRights::q);
     friends = &color_bitboards[turn];
-    enemies = &color_bitboards[turn];
-    friend_arr = &piece_bitboards[turn];
-    enemy_arr = &piece_bitboards[turn];
+    enemies = &color_bitboards[!turn];
+    friend_arr = piece_bitboards[turn];
+    enemy_arr = piece_bitboards[!turn];
 }
 
 bool Board::is_valid_fr(const int file, const int rank) const {
@@ -89,9 +92,9 @@ bool Board::is_valid_fr(const int file, const int rank) const {
 }
 
 void Board::print() const {
-    for (int rank = 0; rank < 8; ++rank) {
+    for (int rank = 7; rank >= 0; --rank) {
         std::cout << "  " << std::string(33, '-') << "\n";
-        std::cout << 8 - rank << " |";
+        std::cout << rank << " |";
         for (int file = 0; file < 8; ++file) {
             std::cout << " " << squares[rank * 8 + file].to_char() << " |";
         }
@@ -117,10 +120,15 @@ void Board::print() const {
     std::cout << "\n";
 }
 
-std::vector<Move> Board::get_moves() const {
-    for (int i = 0; i < 6; i++) {
-    }
+std::vector<Move> Board::get_moves() {
+    moves.clear();
 
+    uint64_t x = friend_arr[Piece::KNIGHT].bitboard;
+    uint8_t sq;
+
+    CTZLL_ITERATOR(sq, x) {
+        knight_moves(sq);
+    }
     return moves;
 }
 
@@ -131,11 +139,11 @@ void Board::knight_moves(const uint8_t sq) {
     for (auto& dir : KNIGHT_DIRECTIONS) {
         new_rank = rank + dir[0];
         new_file = file + dir[1];
-        if (is_valid_fr(new_file, new_rank)) {
-            new_sq = new_rank * 8 + new_file;
-            if (squares[new_sq].get_color() != turn) {
-                moves.push_back(Move(sq, new_sq));
-            }
+        if (!is_valid_fr(new_file, new_rank)) continue;
+
+        new_sq = new_rank * 8 + new_file;
+        if (squares[new_sq].get_piece() == Piece::EMPTY || squares[new_sq].get_color() != turn) {
+            moves.push_back(Move(sq, new_sq));
         }
     }
 }

@@ -2,6 +2,8 @@
 
 #include <string>
 #include <array>
+#include <vector>
+
 #include "piece.hpp"
 #include "bitboard.hpp"
 #include "castling_rights.hpp"
@@ -28,7 +30,7 @@ public:
      * 
      * @return A vector of valid moves.
      */
-    std::vector<Move> get_moves() const;
+    std::vector<Move> get_moves();
 
 private:
     // VARIABLES
@@ -47,8 +49,8 @@ private:
     bool castle_king, castle_queen;
     Bitboard* friends;
     Bitboard* enemies;
-    Bitboard (*friend_arr)[6];
-    Bitboard (*enemy_arr)[6];
+    Bitboard* friend_arr;
+    Bitboard* enemy_arr;
 
     std::vector<Move> moves;
 
