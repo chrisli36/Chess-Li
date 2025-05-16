@@ -5,69 +5,49 @@
 
 #define CTZLL_ITERATOR(sq, bb) for (uint64_t _bb = (bb); _bb && ((sq) = __builtin_ctzll(_bb), true); _bb &= _bb - 1)
 
+
 struct Bitboard {
+private:
     uint64_t bitboard;
 
+public:
     /** 
      * @brief Constructs a new Bitboard object.
      */
     constexpr Bitboard(uint64_t bits = 0) : bitboard(bits) {}
 
     /**
+     * @brief Implicit conversion operator to uint64_t.
+     * 
+     * @return uint64_t 
+     */
+    constexpr operator uint64_t() const { return bitboard; }
+
+    // Bitwise operators
+    constexpr Bitboard operator&(const Bitboard& other) const { return Bitboard(bitboard & other.bitboard); }
+    constexpr Bitboard operator|(const Bitboard& other) const { return Bitboard(bitboard | other.bitboard); }
+    constexpr Bitboard operator^(const Bitboard& other) const { return Bitboard(bitboard ^ other.bitboard); }
+    constexpr Bitboard operator~() const { return Bitboard(~bitboard); }
+
+    Bitboard& operator&=(const Bitboard& other) { bitboard &= other.bitboard; return *this; }
+    Bitboard& operator|=(const Bitboard& other) { bitboard |= other.bitboard; return *this; }
+    Bitboard& operator^=(const Bitboard& other) { bitboard ^= other.bitboard; return *this; }
+
+    /**
      * @brief Resets the bitboard to 0.
      * 
      */
-    constexpr void reset() {
-        bitboard = 0ULL;
+    constexpr void reset() { bitboard = 0ULL;
     }
 
     /**
-     * @brief Sets the bitboard to a specific value.
+     * @brief Returns the intersection of the bitboard with a specific square.
      * 
-     * @param bits The value to set the bitboard to.
+     * @param sq The square to intersect with.
+     * @return The intersection of the bitboard with the square.
      */
-    void set(uint64_t bits) {
-        bitboard = bits;
-    }
-
-    /**
-     * @brief Finds the intersection of two bitboards.
-     * 
-     * @param a
-     * @param b 
-     * @return a Bitboard that is the intersection of a and b.
-     */
-    static constexpr Bitboard intersect_with(const Bitboard& a, const Bitboard& b) {
-        return Bitboard(a.bitboard & b.bitboard);
-    }
-
-    /**
-     * @brief Intersects the bitboard with another bitboard.
-     * 
-     * @param a
-     */
-    constexpr void intersect_with(const Bitboard& a) {
-        bitboard &= a.bitboard;
-    }
-
-    /**
-     * @brief Finds the union of two bitboards.
-     * 
-     * @param a
-     * @param b 
-     * @return a Bitboard that is the union of a and b.
-     */
-    static constexpr Bitboard union_with(const Bitboard& a, const Bitboard& b) {
-        return Bitboard(a.bitboard | b.bitboard);
-    }
-
-    /**
-     * @brief Unions the bitboard with another bitboard.
-     * 
-     * @param a
-     */
-    constexpr void union_with(const Bitboard& a) {
-        bitboard |= a.bitboard;
+    constexpr Bitboard intersect_with_square(uint8_t sq) const {
+        return Bitboard(bitboard & (1ULL << sq));
     }
 
     /**

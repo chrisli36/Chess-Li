@@ -971,6 +971,7 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternal.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityVersions.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/TargetConditionals.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/___wctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/__wctype.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/__xlocale.h \
@@ -1536,6 +1537,7 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/id.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/poll_with_backoff.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__threading_support \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tree \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/make_tuple_types.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/pair_like.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/sfinae_helpers.h \
@@ -1745,6 +1747,7 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/limits \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/math.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/memory \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/mutex \
@@ -1928,8 +1931,182 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/move.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp \
-  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/turn.hpp
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/turn.hpp \
+  /opt/homebrew/include/SFML/Config.hpp \
+  /opt/homebrew/include/SFML/Graphics.hpp \
+  /opt/homebrew/include/SFML/Graphics/BlendMode.hpp \
+  /opt/homebrew/include/SFML/Graphics/CircleShape.hpp \
+  /opt/homebrew/include/SFML/Graphics/Color.hpp \
+  /opt/homebrew/include/SFML/Graphics/ConvexShape.hpp \
+  /opt/homebrew/include/SFML/Graphics/Drawable.hpp \
+  /opt/homebrew/include/SFML/Graphics/Export.hpp \
+  /opt/homebrew/include/SFML/Graphics/Font.hpp \
+  /opt/homebrew/include/SFML/Graphics/Glsl.hpp \
+  /opt/homebrew/include/SFML/Graphics/Glsl.inl \
+  /opt/homebrew/include/SFML/Graphics/Glyph.hpp \
+  /opt/homebrew/include/SFML/Graphics/Image.hpp \
+  /opt/homebrew/include/SFML/Graphics/PrimitiveType.hpp \
+  /opt/homebrew/include/SFML/Graphics/Rect.hpp \
+  /opt/homebrew/include/SFML/Graphics/Rect.inl \
+  /opt/homebrew/include/SFML/Graphics/RectangleShape.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderStates.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderTarget.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderTexture.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderWindow.hpp \
+  /opt/homebrew/include/SFML/Graphics/Shader.hpp \
+  /opt/homebrew/include/SFML/Graphics/Shape.hpp \
+  /opt/homebrew/include/SFML/Graphics/Sprite.hpp \
+  /opt/homebrew/include/SFML/Graphics/Text.hpp \
+  /opt/homebrew/include/SFML/Graphics/Texture.hpp \
+  /opt/homebrew/include/SFML/Graphics/Transform.hpp \
+  /opt/homebrew/include/SFML/Graphics/Transformable.hpp \
+  /opt/homebrew/include/SFML/Graphics/Vertex.hpp \
+  /opt/homebrew/include/SFML/Graphics/VertexArray.hpp \
+  /opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp \
+  /opt/homebrew/include/SFML/Graphics/View.hpp \
+  /opt/homebrew/include/SFML/System.hpp \
+  /opt/homebrew/include/SFML/System/Clock.hpp \
+  /opt/homebrew/include/SFML/System/Err.hpp \
+  /opt/homebrew/include/SFML/System/Export.hpp \
+  /opt/homebrew/include/SFML/System/FileInputStream.hpp \
+  /opt/homebrew/include/SFML/System/InputStream.hpp \
+  /opt/homebrew/include/SFML/System/Lock.hpp \
+  /opt/homebrew/include/SFML/System/MemoryInputStream.hpp \
+  /opt/homebrew/include/SFML/System/Mutex.hpp \
+  /opt/homebrew/include/SFML/System/NonCopyable.hpp \
+  /opt/homebrew/include/SFML/System/Sleep.hpp \
+  /opt/homebrew/include/SFML/System/String.hpp \
+  /opt/homebrew/include/SFML/System/String.inl \
+  /opt/homebrew/include/SFML/System/Thread.hpp \
+  /opt/homebrew/include/SFML/System/Thread.inl \
+  /opt/homebrew/include/SFML/System/ThreadLocal.hpp \
+  /opt/homebrew/include/SFML/System/ThreadLocalPtr.hpp \
+  /opt/homebrew/include/SFML/System/ThreadLocalPtr.inl \
+  /opt/homebrew/include/SFML/System/Time.hpp \
+  /opt/homebrew/include/SFML/System/Utf.hpp \
+  /opt/homebrew/include/SFML/System/Utf.inl \
+  /opt/homebrew/include/SFML/System/Vector2.hpp \
+  /opt/homebrew/include/SFML/System/Vector2.inl \
+  /opt/homebrew/include/SFML/System/Vector3.hpp \
+  /opt/homebrew/include/SFML/System/Vector3.inl \
+  /opt/homebrew/include/SFML/Window.hpp \
+  /opt/homebrew/include/SFML/Window/Clipboard.hpp \
+  /opt/homebrew/include/SFML/Window/Context.hpp \
+  /opt/homebrew/include/SFML/Window/ContextSettings.hpp \
+  /opt/homebrew/include/SFML/Window/Cursor.hpp \
+  /opt/homebrew/include/SFML/Window/Event.hpp \
+  /opt/homebrew/include/SFML/Window/Export.hpp \
+  /opt/homebrew/include/SFML/Window/GlResource.hpp \
+  /opt/homebrew/include/SFML/Window/Joystick.hpp \
+  /opt/homebrew/include/SFML/Window/Keyboard.hpp \
+  /opt/homebrew/include/SFML/Window/Mouse.hpp \
+  /opt/homebrew/include/SFML/Window/Sensor.hpp \
+  /opt/homebrew/include/SFML/Window/Touch.hpp \
+  /opt/homebrew/include/SFML/Window/VideoMode.hpp \
+  /opt/homebrew/include/SFML/Window/Vulkan.hpp \
+  /opt/homebrew/include/SFML/Window/Window.hpp \
+  /opt/homebrew/include/SFML/Window/WindowBase.hpp \
+  /opt/homebrew/include/SFML/Window/WindowHandle.hpp \
+  /opt/homebrew/include/SFML/Window/WindowStyle.hpp
 
+
+/opt/homebrew/include/SFML/Window/WindowStyle.hpp:
+
+/opt/homebrew/include/SFML/Window/WindowHandle.hpp:
+
+/opt/homebrew/include/SFML/Window/WindowBase.hpp:
+
+/opt/homebrew/include/SFML/Window/Vulkan.hpp:
+
+/opt/homebrew/include/SFML/Window/Touch.hpp:
+
+/opt/homebrew/include/SFML/Window/Sensor.hpp:
+
+/opt/homebrew/include/SFML/Window/Keyboard.hpp:
+
+/opt/homebrew/include/SFML/Window/Window.hpp:
+
+/opt/homebrew/include/SFML/Window/Joystick.hpp:
+
+/opt/homebrew/include/SFML/Window/GlResource.hpp:
+
+/opt/homebrew/include/SFML/Window/Event.hpp:
+
+/opt/homebrew/include/SFML/Window/Cursor.hpp:
+
+/opt/homebrew/include/SFML/Window/ContextSettings.hpp:
+
+/opt/homebrew/include/SFML/Window/Context.hpp:
+
+/opt/homebrew/include/SFML/Window/Clipboard.hpp:
+
+/opt/homebrew/include/SFML/Window.hpp:
+
+/opt/homebrew/include/SFML/System/Vector3.inl:
+
+/opt/homebrew/include/SFML/System/Vector3.hpp:
+
+/opt/homebrew/include/SFML/System/Vector2.hpp:
+
+/opt/homebrew/include/SFML/System/Time.hpp:
+
+/opt/homebrew/include/SFML/System/ThreadLocalPtr.inl:
+
+/opt/homebrew/include/SFML/System/ThreadLocalPtr.hpp:
+
+/opt/homebrew/include/SFML/System/String.inl:
+
+/opt/homebrew/include/SFML/System/NonCopyable.hpp:
+
+/opt/homebrew/include/SFML/System/Mutex.hpp:
+
+/opt/homebrew/include/SFML/System/Lock.hpp:
+
+/opt/homebrew/include/SFML/System/FileInputStream.hpp:
+
+/opt/homebrew/include/SFML/System.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Transformable.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Texture.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Sprite.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Shader.hpp:
+
+/opt/homebrew/include/SFML/Graphics/RenderTexture.hpp:
+
+/opt/homebrew/include/SFML/Graphics/RenderTarget.hpp:
+
+/opt/homebrew/include/SFML/Graphics/RenderStates.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Rect.hpp:
+
+/opt/homebrew/include/SFML/Graphics/PrimitiveType.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Glyph.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Glsl.inl:
+
+/opt/homebrew/include/SFML/Graphics/Glsl.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Export.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Drawable.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Color.hpp:
+
+/opt/homebrew/include/SFML/Graphics/CircleShape.hpp:
+
+/opt/homebrew/include/SFML/Graphics/BlendMode.hpp:
+
+/opt/homebrew/include/SFML/Graphics.hpp:
+
+/opt/homebrew/include/SFML/Config.hpp:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/map:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tree:
 
 /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/main.cpp:
 
@@ -2055,6 +2232,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ct_rune_t.h:
 
+/opt/homebrew/include/SFML/System/Export.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_clock_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_caddr_t.h:
@@ -2105,6 +2284,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/ctype.h:
 
+/opt/homebrew/include/SFML/System/Utf.inl:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/version:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rsize_t.h:
@@ -2112,6 +2293,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_map:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/typeinfo:
+
+/opt/homebrew/include/SFML/System/Thread.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string_view:
 
@@ -2224,6 +2407,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/endian.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/remove_const_ref.h:
+
+/opt/homebrew/include/SFML/System/MemoryInputStream.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/move_backward.h:
 
@@ -2391,6 +2576,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_trivially_move_assignable.h:
 
+/opt/homebrew/include/SFML/Graphics/Text.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/common_reference.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_types.h:
@@ -2434,6 +2621,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/for_each_n.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_like.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/TargetConditionals.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_indices.h:
 
@@ -2523,6 +2712,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/has_virtual_destructor.h:
 
+/opt/homebrew/include/SFML/System/Thread.inl:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_constant_evaluated.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/equal_range.h:
@@ -2553,6 +2744,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_int_distribution.h:
 
+/opt/homebrew/include/SFML/Graphics/Image.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/log2.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/builtin_new_allocator.h:
@@ -2565,6 +2758,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/add_lvalue_reference.h:
 
+/opt/homebrew/include/SFML/System/Err.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_swap_ranges.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/reduce.h:
@@ -2574,6 +2769,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/pstl_transform_reduce.h:
+
+/opt/homebrew/include/SFML/System/Sleep.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ucontext.h:
 
@@ -2651,6 +2848,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/unreachable_sentinel.h:
 
+/opt/homebrew/include/SFML/System/Vector2.inl:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__node_handle:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/type_identity.h:
@@ -2715,11 +2914,15 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/front_insert_iterator.h:
 
+/opt/homebrew/include/SFML/System/String.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/empty.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/distance.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/default_sentinel.h:
+
+/opt/homebrew/include/SFML/Window/Mouse.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/cpp17_iterator_concepts.h:
 
@@ -2732,6 +2935,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/tuple.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/counted_iterator.h:
+
+/opt/homebrew/include/SFML/Graphics/View.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_copy_n.h:
 
@@ -2753,6 +2958,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/data.h:
 
+/opt/homebrew/include/SFML/Window/VideoMode.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_constructible.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/memory_resource.h:
@@ -2766,6 +2973,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/get.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_member_function_pointer.h:
+
+/opt/homebrew/include/SFML/System/Utf.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/totally_ordered.h:
 
@@ -3067,6 +3276,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__availability:
 
+/opt/homebrew/include/SFML/System/InputStream.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uint32_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdlib:
@@ -3096,6 +3307,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/remove_volatile.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uses_allocator_construction.h:
+
+/opt/homebrew/include/SFML/Graphics/VertexArray.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__atomic/check_memory_order.h:
 
@@ -3140,6 +3353,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/popcount.h:
+
+/opt/homebrew/include/SFML/Graphics/ConvexShape.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_member_pointer.h:
 
@@ -3193,6 +3408,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/perfect_forward.h:
 
+/opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_once_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/utility:
@@ -3218,6 +3435,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_stable_partition.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_trivially_assignable.h:
+
+/opt/homebrew/include/SFML/Graphics/Transform.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/bit_floor.h:
 
@@ -3255,6 +3474,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/replace_copy_if.h:
 
+/opt/homebrew/include/SFML/Graphics/RectangleShape.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_sample.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/add_const.h:
@@ -3286,6 +3507,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_iterator_concept.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_remove_if.h:
+
+/opt/homebrew/include/SFML/System/Clock.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h:
 
@@ -3437,6 +3660,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/destruct_n.h:
 
+/opt/homebrew/include/SFML/Window/Export.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/min_max_result.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_sort_heap.h:
@@ -3470,6 +3695,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_is_sorted.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_member_object_pointer.h:
+
+/opt/homebrew/include/SFML/System/ThreadLocal.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl_any_all_none_of.h:
 
@@ -3532,6 +3759,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unique.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/view_interface.h:
+
+/opt/homebrew/include/SFML/Graphics/Shape.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:
 
@@ -3609,6 +3838,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/iter_swap.h:
 
+/opt/homebrew/include/SFML/Graphics/Vertex.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_none_of.h:
@@ -3620,6 +3851,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_generate_n.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl_backends/cpu_backends/merge.h:
+
+/opt/homebrew/include/SFML/Graphics/Font.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_all_of.h:
 
@@ -3785,6 +4018,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h:
 
+/opt/homebrew/include/SFML/Graphics/RenderWindow.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/remove_cv.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/noexcept_move_assign_container.h:
@@ -3840,6 +4075,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/format_fwd.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/_limits.h:
+
+/opt/homebrew/include/SFML/Graphics/Rect.inl:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_trivial.h:
 

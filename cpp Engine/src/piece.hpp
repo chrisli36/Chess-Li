@@ -60,6 +60,21 @@ struct Piece {
      */
     constexpr Turn get_color() const { return static_cast<Turn>((type & BLACK_MASK) > 0); }
 
+
+    /**
+     * @brief  Checks if this piece is empty.
+     * 
+     * @return true if the piece is empty, false otherwise.
+     */
+    constexpr bool is_empty() const { return type == EMPTY; }
+
+    /**
+     * @brief Checks if this piece is an enemy piece.
+     * 
+     * @return true if the piece is an enemy, false otherwise.
+     */
+    constexpr bool is_enemy(Turn turn) const { return get_color() != turn;}
+
     /**
      * @brief  Converts a FEN character into a Piece.
      * 

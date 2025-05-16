@@ -111,6 +111,9 @@ chessli_EXTERNAL_OBJECTS =
 chessli: CMakeFiles/chessli.dir/src/main.cpp.o
 chessli: CMakeFiles/chessli.dir/src/board.cpp.o
 chessli: CMakeFiles/chessli.dir/build.make
+chessli: /opt/homebrew/lib/libsfml-graphics.2.6.2.dylib
+chessli: /opt/homebrew/lib/libsfml-window.2.6.2.dylib
+chessli: /opt/homebrew/lib/libsfml-system.2.6.2.dylib
 chessli: CMakeFiles/chessli.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/christopherli/Documents/Junior/Chess/cpp Engine/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable chessli"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chessli.dir/link.txt --verbose=$(VERBOSE)

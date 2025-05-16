@@ -32,6 +32,27 @@ public:
      */
     std::vector<Move> get_moves();
 
+    /** 
+     * @brief Returns the piece at a given square.
+     * 
+     * @param file The file of the square (0-7).
+     * @param rank The rank of the square (0-7).
+     * @return The piece at the square.
+     */
+    constexpr Piece get_piece(int file, int rank) const {
+        return squares[rank * 8 + file];
+    }
+
+    /** 
+     * @brief Returns the piece at a given square.
+     * 
+     * @param sq The square (0-63).
+     * @return The piece at the square.
+     */
+    constexpr Piece get_piece(int sq) const {
+        return squares[sq];
+    }
+
 private:
     // VARIABLES
     // board state variables
@@ -57,11 +78,29 @@ private:
     // METHODS
     void reset();
     void update_turn();
-    bool is_valid_fr(const int file, const int rank) const;
+    bool is_valid_fr(const int file, const int rank, int* sq);
 
+    // MOVE GENERATION
+    void pawn_moves(const uint8_t sq);
+    void knight_moves(const uint8_t sq);
+    void bishop_moves(const uint8_t sq);
+
+    // CONSTANTS
+    static constexpr Piece::PieceType PIECES[] = { Piece::PAWN, Piece::KNIGHT, Piece::BISHOP };
     static constexpr int KNIGHT_DIRECTIONS[8][2] = {
         { 1,  2}, { 2,  1}, { 2, -1}, { 1, -2},
         {-1, -2}, {-2, -1}, {-2,  1}, {-1,  2}
     };
-    void knight_moves(const uint8_t sq);
+    static constexpr int BISHOP_DIRECTIONS[4][2] = {
+        { 1,  1}, { 1, -1}, {-1, -1}, {-1,  1}
+    };
+    static constexpr int ROOK_DIRECTIONS[4][2] = {
+        { 1,  0}, { 0,  1}, {-1,  0}, { 0, -1}
+    };
+    static constexpr void (Board::*CALCULATE_MOVES_FUNCTIONS[])(uint8_t) = {
+        &Board::pawn_moves,
+        &Board::knight_moves,
+        &Board::bishop_moves,
+    };
+
 };

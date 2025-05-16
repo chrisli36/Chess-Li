@@ -87,7 +87,8 @@ void Board::update_turn() {
     enemy_arr = piece_bitboards[!turn];
 }
 
-bool Board::is_valid_fr(const int file, const int rank) const {
+bool Board::is_valid_fr(const int file, const int rank, int* sq) {
+    *sq = rank * 8 + file;
     return (file >= 0 && file < 8 && rank >= 0 && rank < 8);
 }
 
@@ -110,9 +111,9 @@ void Board::print() const {
     if (castling_rights.can_castle(CastlingRights::q)) std::cout << "q ";
     std::cout << "\n";
     std::cout << "En Passant: ";
-    if (en_passant_square.bitboard) {
-        int file = __builtin_ctzll(en_passant_square.bitboard) % 8;
-        int rank = 8 - (__builtin_ctzll(en_passant_square.bitboard) / 8);
+    if (en_passant_square) {
+        int file = __builtin_ctzll(en_passant_square) % 8;
+        int rank = 8 - (__builtin_ctzll(en_passant_square) / 8);
         std::cout << static_cast<char>('a' + file) << rank;
     } else {
         std::cout << "-";
@@ -123,27 +124,83 @@ void Board::print() const {
 std::vector<Move> Board::get_moves() {
     moves.clear();
 
-    uint64_t x = friend_arr[Piece::KNIGHT].bitboard;
     uint8_t sq;
-
-    CTZLL_ITERATOR(sq, x) {
-        knight_moves(sq);
+    for (Piece::PieceType piece : PIECES) {
+        std::cout << "hi" << std::endl;
+        friend_arr[piece].print();
+        CTZLL_ITERATOR(sq, friend_arr[piece]) {
+            (this->*CALCULATE_MOVES_FUNCTIONS[piece])(sq);
+        }
     }
     return moves;
+}
+
+void Board::pawn_moves(const uint8_t sq) {
+    const int rank = sq / 8;
+    const int file = sq % 8;
+    const int forward = (turn == Turn::WHITE) ? 1 : -1;
+    int new_rank, new_file, new_sq;
+
+    // forward pawn moves
+    new_rank = rank + forward;
+    if (is_valid_fr(file, new_rank, &new_sq) && squares[new_sq].is_empty()) {
+        moves.push_back(Move(sq, new_sq));
+        if ((turn == Turn::WHITE && rank == 1) || (turn == Turn::BLACK && rank == 6)) {
+            new_rank = rank + forward + forward;
+            if (is_valid_fr(file, new_rank, &new_sq) && squares[new_sq].is_empty()) {
+                moves.push_back(Move(sq, new_sq, MoveFlag::PAWN_UP_TWO));
+            }
+        }
+    }
+
+    // pawn captures
+    for (int horizontal : {-1, 1}) {
+        new_file = file + horizontal;
+        new_rank = rank + forward;
+        if (!is_valid_fr(new_file, new_rank, &new_sq)) continue;
+        if (squares[new_sq].is_enemy(turn)) {
+            moves.push_back(Move(sq, new_sq));
+        } else if (squares[new_sq].is_empty() && en_passant_square.intersect_with_square(new_sq)) {
+            moves.push_back(Move(sq, new_sq, MoveFlag::EN_PASSANT_CAPTURE));
+        }
+    }
 }
 
 void Board::knight_moves(const uint8_t sq) {
     const int rank = sq / 8;
     const int file = sq % 8;
     int new_rank, new_file, new_sq;
+
+    // check all 8 knight moves
     for (auto& dir : KNIGHT_DIRECTIONS) {
         new_rank = rank + dir[0];
         new_file = file + dir[1];
-        if (!is_valid_fr(new_file, new_rank)) continue;
-
-        new_sq = new_rank * 8 + new_file;
-        if (squares[new_sq].get_piece() == Piece::EMPTY || squares[new_sq].get_color() != turn) {
+        if (!is_valid_fr(new_file, new_rank, &new_sq)) continue;
+        if (squares[new_sq].is_empty() || squares[new_sq].is_enemy(turn)) {
             moves.push_back(Move(sq, new_sq));
+        }
+    }
+}
+
+void Board::bishop_moves(const uint8_t sq) {
+    const int rank = sq / 8;
+    const int file = sq % 8;
+    int new_rank, new_file, new_sq;
+
+    for (auto& dir : BISHOP_DIRECTIONS) {
+        new_rank = rank + dir[0];
+        new_file = file + dir[1];
+        while (is_valid_fr(new_file, new_rank, &new_sq)) {
+            if (squares[new_sq].is_empty()) {
+                moves.push_back(Move(sq, new_sq));
+            } else if (squares[new_sq].is_enemy(turn)) {
+                moves.push_back(Move(sq, new_sq));
+                break;
+            } else {
+                break;
+            }
+            new_rank += dir[0];
+            new_file += dir[1];
         }
     }
 }
