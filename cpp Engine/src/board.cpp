@@ -135,6 +135,14 @@ std::vector<Move> Board::get_moves() {
     return moves;
 }
 
+void Board::make_move(const Move* move) {
+    if (move->is_en_passant()) {
+    } else if (move->is_pawn_up_two()) {
+    } else if (move->is_castle()) {
+    } else if (move->is_promotion()) {
+    }
+}
+
 void Board::pawn_moves(const uint8_t sq) {
     const int rank = sq / 8;
     const int file = sq % 8;
@@ -203,4 +211,35 @@ void Board::bishop_moves(const uint8_t sq) {
             new_file += dir[1];
         }
     }
+}
+
+void Board::rook_moves(const uint8_t sq) {
+    const int rank = sq / 8;
+    const int file = sq % 8;
+    int new_rank, new_file, new_sq;
+
+    for (auto& dir : ROOK_DIRECTIONS) {
+        new_rank = rank + dir[0];
+        new_file = file + dir[1];
+        while (is_valid_fr(new_file, new_rank, &new_sq)) {
+            if (squares[new_sq].is_empty()) {
+                moves.push_back(Move(sq, new_sq));
+            } else if (squares[new_sq].is_enemy(turn)) {
+                moves.push_back(Move(sq, new_sq));
+                break;
+            } else {
+                break;
+            }
+            new_rank += dir[0];
+            new_file += dir[1];
+        }
+    }
+}
+
+void Board::queen_moves(const uint8_t sq) {
+    bishop_moves(sq);
+    rook_moves(sq);
+}
+
+void Board::king_moves(const uint8_t sq) {
 }

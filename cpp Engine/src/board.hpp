@@ -32,6 +32,13 @@ public:
      */
     std::vector<Move> get_moves();
 
+    /**
+     * @brief Makes the move on the board, assumes a valid move.
+     * 
+     * @param move The move to be made 
+     */
+    void make_move(const Move* move);
+
     /** 
      * @brief Returns the piece at a given square.
      * 
@@ -84,9 +91,12 @@ private:
     void pawn_moves(const uint8_t sq);
     void knight_moves(const uint8_t sq);
     void bishop_moves(const uint8_t sq);
+    void rook_moves(const uint8_t sq);
+    void queen_moves(const uint8_t sq);
+    void king_moves(const uint8_t sq);
 
     // CONSTANTS
-    static constexpr Piece::PieceType PIECES[] = { Piece::PAWN, Piece::KNIGHT, Piece::BISHOP };
+    static constexpr Piece::PieceType PIECES[] = { Piece::PAWN, Piece::KNIGHT, Piece::BISHOP, Piece::ROOK, Piece::QUEEN, Piece::KING };
     static constexpr int KNIGHT_DIRECTIONS[8][2] = {
         { 1,  2}, { 2,  1}, { 2, -1}, { 1, -2},
         {-1, -2}, {-2, -1}, {-2,  1}, {-1,  2}
@@ -101,6 +111,9 @@ private:
         &Board::pawn_moves,
         &Board::knight_moves,
         &Board::bishop_moves,
+        &Board::rook_moves,
+        &Board::queen_moves,
+        &Board::king_moves
     };
 
 };
