@@ -41,13 +41,13 @@ public:
     }
 
     /**
-     * @brief Returns the intersection of the bitboard with a specific square.
+     * @brief Determines if bitboard covers a square.
      * 
-     * @param sq The square to intersect with.
-     * @return The intersection of the bitboard with the square.
+     * @param sq The square in the query
+     * @return A boolean representing whether or not the bitboard contains the square.
      */
-    constexpr Bitboard intersect_with_square(uint8_t sq) const {
-        return Bitboard(bitboard & (1ULL << sq));
+    constexpr Bitboard covers(uint8_t sq) const {
+        return (bitboard & (1ULL << sq)) > 0;
     }
 
     /**
@@ -57,6 +57,15 @@ public:
      */
     constexpr void add_square(uint8_t sq) {
         bitboard |= (1ULL << sq);
+    }
+
+    /**
+     * @brief Removes a piece from the bitboard.
+     * 
+     * @param sq The square to remove the piece from.
+     */
+    constexpr void remove_square(uint8_t sq) {
+        bitboard &= ~(1ULL << sq);
     }
 
     /**

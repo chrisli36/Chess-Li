@@ -126,8 +126,6 @@ std::vector<Move> Board::get_moves() {
 
     uint8_t sq;
     for (Piece::PieceType piece : PIECES) {
-        std::cout << "hi" << std::endl;
-        friend_arr[piece].print();
         CTZLL_ITERATOR(sq, friend_arr[piece]) {
             (this->*CALCULATE_MOVES_FUNCTIONS[piece])(sq);
         }
@@ -136,11 +134,27 @@ std::vector<Move> Board::get_moves() {
 }
 
 void Board::make_move(const Move* move) {
+    const uint8_t start = move->start();
+    const uint8_t end = move->end();
+    Piece piece = squares[start];
+    
+    squares[start] = Piece::EMPTY;
+    squares[end] = piece;
+    piece_bitboards[turn][piece.get_piece()].remove_square(start);
+    piece_bitboards[turn][piece.get_piece()].add_square(end);
+    color_bitboards[turn].remove_square(start);
+    color_bitboards[turn].add_square(end);
+    all_pieces_bitboard.remove_square(start);
+    all_pieces_bitboard.add_square(start);
+
     if (move->is_en_passant()) {
     } else if (move->is_pawn_up_two()) {
     } else if (move->is_castle()) {
     } else if (move->is_promotion()) {
     }
+
+    turn = (turn == Turn::WHITE) ? Turn::BLACK : Turn::WHITE;
+    update_turn();
 }
 
 void Board::pawn_moves(const uint8_t sq) {
@@ -168,7 +182,7 @@ void Board::pawn_moves(const uint8_t sq) {
         if (!is_valid_fr(new_file, new_rank, &new_sq)) continue;
         if (squares[new_sq].is_enemy(turn)) {
             moves.push_back(Move(sq, new_sq));
-        } else if (squares[new_sq].is_empty() && en_passant_square.intersect_with_square(new_sq)) {
+        } else if (squares[new_sq].is_empty() && en_passant_square.covers(new_sq)) {
             moves.push_back(Move(sq, new_sq, MoveFlag::EN_PASSANT_CAPTURE));
         }
     }

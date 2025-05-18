@@ -73,7 +73,7 @@ struct Piece {
      * 
      * @return true if the piece is an enemy, false otherwise.
      */
-    constexpr bool is_enemy(Turn turn) const { return get_color() != turn;}
+    constexpr bool is_enemy(Turn turn) const { return !is_empty() && get_color() != turn;}
 
     /**
      * @brief  Converts a FEN character into a Piece.

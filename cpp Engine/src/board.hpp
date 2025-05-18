@@ -46,8 +46,18 @@ public:
      * @param rank The rank of the square (0-7).
      * @return The piece at the square.
      */
-    constexpr Piece get_piece(int file, int rank) const {
+    constexpr Piece get_piece(const int file, const int rank) const {
         return squares[rank * 8 + file];
+    }
+
+    /**
+     * @brief Returns if the square is empty.
+     * 
+     * @param sq The square on the board.
+     * @return A boolean indicating if the square is empty.
+     */
+    constexpr bool is_empty(const int sq) const {
+        return squares[sq].is_empty();
     }
 
     /** 
