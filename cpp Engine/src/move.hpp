@@ -46,13 +46,13 @@ struct Move {
 
     static constexpr uint8_t FIRST_PROMOTION_FLAG = MoveFlag::QUEEN_PROMOTION;
     constexpr bool is_promotion() const { return flag() >= FIRST_PROMOTION_FLAG; }
-    constexpr Piece promotion_piece() const {
+    constexpr Piece promotion_piece(Turn turn) const {
         switch (flag()) {
-            case MoveFlag::QUEEN_PROMOTION:  return Piece::WHITE_QUEEN;
-            case MoveFlag::ROOK_PROMOTION:   return Piece::WHITE_ROOK;
-            case MoveFlag::BISHOP_PROMOTION: return Piece::WHITE_BISHOP;
-            case MoveFlag::KNIGHT_PROMOTION: return Piece::WHITE_KNIGHT;
-            default:                         return Piece::EMPTY;
+            case MoveFlag::QUEEN_PROMOTION:  return (turn == Turn::WHITE) ? Piece::WHITE_QUEEN : Piece::BLACK_QUEEN;
+            case MoveFlag::ROOK_PROMOTION:   return (turn == Turn::WHITE) ? Piece::WHITE_ROOK : Piece::BLACK_ROOK;
+            case MoveFlag::BISHOP_PROMOTION: return (turn == Turn::WHITE) ? Piece::WHITE_BISHOP : Piece::BLACK_BISHOP;
+            case MoveFlag::KNIGHT_PROMOTION: return (turn == Turn::WHITE) ? Piece::WHITE_KNIGHT : Piece::BLACK_KNIGHT;
+            default:                         return (turn == Turn::WHITE) ? Piece::WHITE_QUEEN : Piece::BLACK_QUEEN;
         }
     }
 

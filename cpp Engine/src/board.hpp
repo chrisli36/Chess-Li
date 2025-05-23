@@ -9,6 +9,7 @@
 #include "castling_rights.hpp"
 #include "turn.hpp"
 #include "move.hpp"
+#include "position.hpp"
 
 class Board {
 public:
@@ -89,6 +90,9 @@ private:
     Bitboard* enemies;
     Bitboard* friend_arr;
     Bitboard* enemy_arr;
+    Bitboard controlled_squares;
+    uint8_t attackers[2];
+    uint8_t attacker_count;
 
     std::vector<Move> moves;
 
@@ -96,8 +100,19 @@ private:
     void reset();
     void update_turn();
     bool is_valid_fr(const int file, const int rank, int* sq);
+    void erase_piece(const int sq);
+    void add_piece(const int sq, const Piece piece);
+    void rook_disabling_castling_move(const uint8_t sq);
+    void add_king_attacker(const uint8_t start, const int end);
 
     // MOVE GENERATION
+    void pawn_controlled(const uint8_t sq);
+    void knight_controlled(const uint8_t sq);
+    void bishop_controlled(const uint8_t sq);
+    void rook_controlled(const uint8_t sq);
+    void queen_controlled(const uint8_t sq);
+    void king_controlled(const uint8_t sq);
+
     void pawn_moves(const uint8_t sq);
     void knight_moves(const uint8_t sq);
     void bishop_moves(const uint8_t sq);
@@ -117,6 +132,10 @@ private:
     static constexpr int ROOK_DIRECTIONS[4][2] = {
         { 1,  0}, { 0,  1}, {-1,  0}, { 0, -1}
     };
+    static constexpr int KING_DIRECTIONS[8][2] = {
+        { 1,  1}, { 1,  0}, { 1, -1}, { 0, -1},
+        {-1, -1}, {-1,  0}, {-1,  1}, { 0,  1}
+    };
     static constexpr void (Board::*CALCULATE_MOVES_FUNCTIONS[])(uint8_t) = {
         &Board::pawn_moves,
         &Board::knight_moves,
@@ -124,6 +143,14 @@ private:
         &Board::rook_moves,
         &Board::queen_moves,
         &Board::king_moves
+    };
+    static constexpr void (Board::*CALCULATE_CONTROLLED_FUNCTIONS[])(uint8_t) = {
+        &Board::pawn_controlled,
+        &Board::knight_controlled,
+        &Board::bishop_controlled,
+        &Board::rook_controlled,
+        &Board::queen_controlled,
+        &Board::king_controlled
     };
 
 };

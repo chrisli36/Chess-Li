@@ -7,6 +7,11 @@
 
 
 struct Bitboard {
+/**
+ * @brief A class representing a bitboard for chess.
+ * 
+ * By convention, the MSB represents the a1 square and the LSB represents the h8 square.
+ */
 private:
     uint64_t bitboard;
 
@@ -74,11 +79,10 @@ public:
      */
     void print() {
         std::bitset<64> bits(bitboard);
-
-        for (int row = 0; row < 8; ++row) {
-            for (int col = 0; col < 8; ++col) {
-                int bit_index = 63 - (row * 8 + col);
-                std::cout << bits[bit_index];
+        int rank, file;
+        for (rank = 7; rank >= 0; --rank) {
+            for (file = 0; file < 8; ++file) {
+                std::cout << bits[rank * 8 + file];
             }
             std::cout << '\n';
         }

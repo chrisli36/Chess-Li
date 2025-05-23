@@ -1040,4 +1040,5 @@ CMakeFiles/chessli.dir/src/main.cpp.o: \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/turn.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp \
-  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/move.hpp
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/move.hpp \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/position.hpp
