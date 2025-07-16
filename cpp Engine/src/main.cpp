@@ -10,20 +10,30 @@
 // ./chess-engine
 
 const int SQUARE_SIZE = 60;
+const int CIRCLE_RADIUS = 25;
+const int CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
 const int BOARD_SIZE = 8;
 const int TEXTURE_SQUARE_SIZE = 333;
 const sf::Color BROWN = sf::Color(240, 217, 181);
 const sf::Color TAN = sf::Color(181, 136, 99);
-const sf::Color RED = sf::Color(255, 0, 0, 100);
-const sf::Color GREEN = sf::Color(0, 255, 0, 100);
+const sf::Color RED = sf::Color(255, 0, 0, 50);
+const sf::Color GREEN = sf::Color(0, 255, 0, 50);
+const sf::Color BLUE = sf::Color(0, 0, 255, 50);
 
 const int PIECES_MAP[] = { 5, 3, 2, 4, 1, 0 };
 
-void draw_square(sf::RenderWindow* window, const int file, const int rank, const int size, const sf::Color* color) {
-    sf::RectangleShape square(sf::Vector2f(size, size));
-    square.setPosition(file * size, (7 - rank) * size);
+void draw_square(sf::RenderWindow* window, const int file, const int rank, const sf::Color* color) {
+    sf::RectangleShape square(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
+    square.setPosition(file * SQUARE_SIZE, (7 - rank) * SQUARE_SIZE);
     square.setFillColor(*color);
     window->draw(square);
+}
+
+void draw_circle(sf::RenderWindow* window, const int file, const int rank, const sf::Color* color) {
+    sf::CircleShape circle(CIRCLE_RADIUS);
+    circle.setPosition(file * SQUARE_SIZE + CIRCLE_START_OFFSET, (7 - rank) * SQUARE_SIZE + CIRCLE_START_OFFSET);
+    circle.setFillColor(*color);
+    window->draw(circle);
 }
 
 bool is_selected(const int square, int* file, int* rank) {
@@ -90,12 +100,6 @@ int main() {
                 } else if (!board.is_empty(curr_sq)) {
                     prev_sq = curr_sq;
                 }
-
-                // if (board.get_piece(curr_sq).is_empty()) continue;
-
-                // std::cout << "Selected square: " << file << ", " << rank << "\n";
-                // std::cout << "Piece: " << board.get_piece(clicked_square).to_char() << "\n";
-                // selected_square = clicked_square;
             }
         }
         window.clear();
@@ -103,7 +107,12 @@ int main() {
         // Draw board squares
         for (int rank = 0; rank < 8; ++rank) {
             for (int file = 0; file < 8; ++file) {
-                draw_square(&window, file, rank, SQUARE_SIZE, (file + rank) % 2 == 0 ? &BROWN : &TAN);
+                draw_square(&window, file, rank, (file + rank) % 2 == 0 ? &BROWN : &TAN);
+
+                // highlight controlled squares
+                if (board.is_controlled(file + rank * 8)) {
+                    draw_circle(&window, file, rank, &BLUE);
+                }
             }
         }
 
@@ -129,14 +138,14 @@ int main() {
             }
         }
 
-        // Highlight selected square
+        // highlight selected squares
         if (is_selected(prev_sq, &file, &rank)) {
-            draw_square(&window, file, rank, SQUARE_SIZE, &RED);
+            draw_square(&window, file, rank, &RED);
             for (Move move : moves) {
                 if (move.start() == prev_sq) {
                     file = move.end() % 8;
                     rank = move.end() / 8;
-                    draw_square(&window, file, rank, SQUARE_SIZE, &GREEN);
+                    draw_square(&window, file, rank, &GREEN);
                 }
             }
         }

@@ -777,7 +777,6 @@ CMakeFiles/chessli.dir/src/board.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/format
  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/functional
  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/initializer_list
- /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip
  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios
  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iosfwd
  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream
@@ -964,6 +963,7 @@ CMakeFiles/chessli.dir/src/board.cpp.o
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
  /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/attacks.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/bitboard.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.hpp
  /Users/christopherli/Documents/Junior/Chess/cpp Engine/src/castling_rights.hpp

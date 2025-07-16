@@ -1,15 +1,14 @@
 #pragma once
 
 #include <string>
-#include <array>
 #include <vector>
 
 #include "piece.hpp"
 #include "bitboard.hpp"
 #include "castling_rights.hpp"
+#include "position.hpp"
 #include "turn.hpp"
 #include "move.hpp"
-#include "position.hpp"
 
 class Board {
 public:
@@ -67,8 +66,12 @@ public:
      * @param sq The square (0-63).
      * @return The piece at the square.
      */
-    constexpr Piece get_piece(int sq) const {
+    constexpr Piece get_piece(const int sq) const {
         return squares[sq];
+    }
+
+    constexpr bool is_controlled(const int sq) const {
+        return controlled_squares.covers(sq);
     }
 
 private:
@@ -93,8 +96,16 @@ private:
     Bitboard controlled_squares;
     uint8_t attackers[2];
     uint8_t attacker_count;
+    Bitboard pinned_limits[64];
+    Bitboard evasion_mask;
 
     std::vector<Move> moves;
+
+    // Macro for iterating over sliding piece directions
+    #define MOVE_ITERATOR(dir, rank, file, new_rank, new_file, new_sq) \
+        for (new_rank = rank + dir[0], new_file = file + dir[1]; \
+            is_valid_fr(new_file, new_rank, &new_sq); \
+            new_rank += dir[0], new_file += dir[1])
 
     // METHODS
     void reset();
@@ -103,7 +114,10 @@ private:
     void erase_piece(const int sq);
     void add_piece(const int sq, const Piece piece);
     void rook_disabling_castling_move(const uint8_t sq);
-    void add_king_attacker(const uint8_t start, const int end);
+    void add_king_attacker(const uint8_t start, Bitboard attacks);
+    bool is_sliding_piece(const Piece piece);
+    void calculate_pins();
+    bool can_move_under_pin(const uint8_t sq, const uint8_t new_sq);
 
     // MOVE GENERATION
     void pawn_controlled(const uint8_t sq);
@@ -122,10 +136,6 @@ private:
 
     // CONSTANTS
     static constexpr Piece::PieceType PIECES[] = { Piece::PAWN, Piece::KNIGHT, Piece::BISHOP, Piece::ROOK, Piece::QUEEN, Piece::KING };
-    static constexpr int KNIGHT_DIRECTIONS[8][2] = {
-        { 1,  2}, { 2,  1}, { 2, -1}, { 1, -2},
-        {-1, -2}, {-2, -1}, {-2,  1}, {-1,  2}
-    };
     static constexpr int BISHOP_DIRECTIONS[4][2] = {
         { 1,  1}, { 1, -1}, {-1, -1}, {-1,  1}
     };
@@ -152,5 +162,12 @@ private:
         &Board::queen_controlled,
         &Board::king_controlled
     };
-
+    static constexpr Bitboard KINGSIDE_CASTLE[2] = {
+        Bitboard(1ULL << F1) | Bitboard(1ULL << G1),
+        Bitboard(1ULL << F8) | Bitboard(1ULL << G8),
+    };
+    static constexpr Bitboard QUEENSIDE_CASTLE[2] = {
+        Bitboard(1ULL << D1) | Bitboard(1ULL << C1) | Bitboard(1ULL << B1),
+        Bitboard(1ULL << D8) | Bitboard(1ULL << C8) | Bitboard(1ULL << B8),
+    };
 };

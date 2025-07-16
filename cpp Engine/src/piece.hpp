@@ -76,6 +76,13 @@ struct Piece {
     constexpr bool is_enemy(Turn turn) const { return !is_empty() && get_color() != turn;}
 
     /**
+     * @brief Checks if this piece is a friend piece.
+     * 
+     * @return true if the piece is a friend, false otherwise.
+     */
+    constexpr bool is_friendly(Turn turn) const { return !is_empty() && get_color() == turn;}
+
+    /**
      * @brief  Converts a FEN character into a Piece.
      * 
      * @param c the FEN character (e.g., 'p', 'K')

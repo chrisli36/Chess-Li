@@ -38,3 +38,33 @@ undo move
     if the piece was a promotion, need to replace start square with pawn
     if the piece took away castling rights, grant them back
     if the piece did en passant, need to add a pawn back
+
+
+
+
+
+I'm writing a chess engine, and here's how my move generation works:
+
+1. calculate the controlled squares, as in the squares that are attacked or 
+    "seen" by the enemy pieces. During this time, also keep track of the pieces
+    that are currently checking the king. This is for limiting king moves. 
+    My implementation is to iterate through all the enemy pieces, look at 
+    their controlling squares, and union with a running bitmask of controlled 
+    squares.
+
+2. if the number of attackers is 2, then only return king moves, limited by 
+    controlled squares
+
+3. calculate the squares that pinned pieces must move within. There are two 
+    approaches I can think of:  iterate through all the sliding pieces, if they
+    could possibly see the king, and there's a piece between them, then limit 
+    that piece's movement along the vision of the sliding piece. The other 
+    approach is to iterate through the 8 directions of the king, keep track of
+    encountered pieces, and if it encounters a 2nd piece and it's sliding, then
+    limit the first piece's movement.
+
+4. calculate all piece moves, limited by pins. Limit the king moves by 
+    controlled squares.
+
+Can you help me check my logic and speed? Are there any improvements I could 
+    make? What are the best practices here?

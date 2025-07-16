@@ -776,7 +776,6 @@ CMakeFiles/chessli.dir/src/board.cpp.o: /Users/christopherli/Documents/Junior/Ch
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/format \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/functional \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/initializer_list \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iosfwd \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
@@ -963,6 +962,7 @@ CMakeFiles/chessli.dir/src/board.cpp.o: /Users/christopherli/Documents/Junior/Ch
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/attacks.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/board.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp \
@@ -2120,6 +2120,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp:
 
+/Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/attacks.hpp:
+
 /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h:
@@ -2302,6 +2304,10 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string_view:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/compose.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdio.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl_backends/cpu_backends/fill.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdint.h:
@@ -2319,14 +2325,6 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ino_t.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_mismatch.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unwrap_range.h:
 
@@ -3010,10 +3008,6 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory_resource/polymorphic_allocator.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdio.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/compose.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/back_insert_iterator.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_timeval.h:
@@ -3551,6 +3545,12 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_partial_sort_copy.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_for_each_n.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ino_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_mismatch.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/voidify.h:
 

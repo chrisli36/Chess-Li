@@ -8,8 +8,8 @@ enum MoveFlag : uint8_t {
     NO_FLAG             = 0,
     EN_PASSANT_CAPTURE  = 1,
     PAWN_UP_TWO         = 2,
-    CASTLE_KINGSIDE     = 3,
-    CASTLE_QUEENSIDE    = 4,
+    KINGSIDE_CASTLE     = 3,
+    QUEENSIDE_CASTLE    = 4,
     QUEEN_PROMOTION     = 5,
     ROOK_PROMOTION      = 6,
     BISHOP_PROMOTION    = 7,
@@ -41,8 +41,8 @@ struct Move {
     constexpr bool is_en_passant() const { return flag() == MoveFlag::EN_PASSANT_CAPTURE; }
     constexpr bool is_pawn_up_two() const { return flag() == MoveFlag::PAWN_UP_TWO; }
     constexpr bool is_castle() const { return is_castle_kingside() || is_castle_queenside(); }
-    constexpr bool is_castle_kingside() const { return flag() == MoveFlag::CASTLE_KINGSIDE; }
-    constexpr bool is_castle_queenside() const { return flag() == MoveFlag::CASTLE_QUEENSIDE; }
+    constexpr bool is_castle_kingside() const { return flag() == MoveFlag::KINGSIDE_CASTLE; }
+    constexpr bool is_castle_queenside() const { return flag() == MoveFlag::QUEENSIDE_CASTLE; }
 
     static constexpr uint8_t FIRST_PROMOTION_FLAG = MoveFlag::QUEEN_PROMOTION;
     constexpr bool is_promotion() const { return flag() >= FIRST_PROMOTION_FLAG; }
@@ -58,7 +58,7 @@ struct Move {
 
     static constexpr char file_of(uint8_t sq) { return 'a' + (sq % 8); }
     static constexpr char rank_of(uint8_t sq) { return '1' + (sq / 8); }
-    std::string to_algebraic(uint8_t sq) const {
+    static std::string to_algebraic(uint8_t sq) {
         return std::string(1, file_of(sq)) + std::string(1, rank_of(sq));
     }
     std::string to_string() const { 

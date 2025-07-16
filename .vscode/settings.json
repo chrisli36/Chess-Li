@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "optional": "cpp",
-        "vector": "cpp"
-    }
+        "vector": "cpp",
+        "iostream": "cpp"
+    },
+    "cmake.sourceDirectory": "/Users/christopherli/Documents/Junior/Chess/cpp Engine"
 }
