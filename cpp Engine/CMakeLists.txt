@@ -12,6 +12,7 @@ find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 add_executable(chessli
     src/main.cpp
     src/board.cpp
+    src/chess_ui.cpp
 )
 
 # Link SFML

@@ -10,5 +10,11 @@
   "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/include -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/board.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp\"",
   "file": "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp",
   "output": "CMakeFiles/chessli.dir/src/board.cpp.o"
+},
+{
+  "directory": "/Users/christopherli/Documents/Junior/Chess/build",
+  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/include -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/chess_ui.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/chess_ui.cpp\"",
+  "file": "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/chess_ui.cpp",
+  "output": "CMakeFiles/chessli.dir/src/chess_ui.cpp.o"
 }
 ]

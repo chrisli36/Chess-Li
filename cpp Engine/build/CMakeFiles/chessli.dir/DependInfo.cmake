@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp" "CMakeFiles/chessli.dir/src/board.cpp.o" "gcc" "CMakeFiles/chessli.dir/src/board.cpp.o.d"
+  "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/chess_ui.cpp" "CMakeFiles/chessli.dir/src/chess_ui.cpp.o" "gcc" "CMakeFiles/chessli.dir/src/chess_ui.cpp.o.d"
   "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/main.cpp" "CMakeFiles/chessli.dir/src/main.cpp.o" "gcc" "CMakeFiles/chessli.dir/src/main.cpp.o.d"
   )
 

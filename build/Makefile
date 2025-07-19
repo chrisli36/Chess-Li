@@ -153,6 +153,30 @@ src/board.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/board.cpp.s
 .PHONY : src/board.cpp.s
 
+src/chess_ui.o: src/chess_ui.cpp.o
+.PHONY : src/chess_ui.o
+
+# target to build an object file
+src/chess_ui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/chess_ui.cpp.o
+.PHONY : src/chess_ui.cpp.o
+
+src/chess_ui.i: src/chess_ui.cpp.i
+.PHONY : src/chess_ui.i
+
+# target to preprocess a source file
+src/chess_ui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/chess_ui.cpp.i
+.PHONY : src/chess_ui.cpp.i
+
+src/chess_ui.s: src/chess_ui.cpp.s
+.PHONY : src/chess_ui.s
+
+# target to generate assembly for a file
+src/chess_ui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/chess_ui.cpp.s
+.PHONY : src/chess_ui.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -189,6 +213,9 @@ help:
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"
+	@echo "... src/chess_ui.o"
+	@echo "... src/chess_ui.i"
+	@echo "... src/chess_ui.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

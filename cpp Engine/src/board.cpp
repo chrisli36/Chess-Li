@@ -199,7 +199,7 @@ std::vector<Move> Board::get_moves() {
         const uint8_t king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
         const uint8_t attacker_sq = attackers[0];
         evasion_mask = AttackBitboards::ray_between[attacker_sq][king_sq];
-        evasion_mask.add_square(king_sq);
+        evasion_mask.add_square(attacker_sq);
         std::cout << "Evasion mask: " << evasion_mask << std::endl;
         evasion_mask.print();
     }
@@ -333,9 +333,18 @@ void Board::pawn_moves(const uint8_t sq) {
     if (is_valid_fr(file, new_rank, &new_sq) 
             && squares[new_sq].is_empty() 
             && can_move_under_pin(sq, new_sq)) {
+        // pawn up one
         if (evasion_mask.covers(new_sq)) {
-            moves.push_back(Move(sq, new_sq));
+            if ((rank == 6 && turn == Turn::WHITE) || (rank == 1 && turn == Turn::BLACK)) {
+                moves.push_back(Move(sq, new_sq, MoveFlag::QUEEN_PROMOTION));
+                moves.push_back(Move(sq, new_sq, MoveFlag::ROOK_PROMOTION));
+                moves.push_back(Move(sq, new_sq, MoveFlag::BISHOP_PROMOTION));
+                moves.push_back(Move(sq, new_sq, MoveFlag::KNIGHT_PROMOTION));
+            } else {
+                moves.push_back(Move(sq, new_sq));
+            }
         }
+        // pawn up two
         if ((turn == Turn::WHITE && rank == 1) || (turn == Turn::BLACK && rank == 6)) {
             new_rank = rank + forward + forward;
             if (is_valid_fr(file, new_rank, &new_sq) 
@@ -352,7 +361,14 @@ void Board::pawn_moves(const uint8_t sq) {
     Bitboard attacks = AttackBitboards::pawn_attacks[turn][sq];
     CTZLL_ITERATOR(new_sq, attacks) {
         if (squares[new_sq].is_enemy(turn) && evasion_mask.covers(new_sq)) {
-            moves.push_back(Move(sq, new_sq));
+            if ((rank == 6 && turn == Turn::WHITE) || (rank == 1 && turn == Turn::BLACK)) {
+                moves.push_back(Move(sq, new_sq, MoveFlag::QUEEN_PROMOTION));
+                moves.push_back(Move(sq, new_sq, MoveFlag::ROOK_PROMOTION));
+                moves.push_back(Move(sq, new_sq, MoveFlag::BISHOP_PROMOTION));
+                moves.push_back(Move(sq, new_sq, MoveFlag::KNIGHT_PROMOTION));
+            } else {
+                moves.push_back(Move(sq, new_sq));
+            }
         } else if (squares[new_sq].is_empty() 
                 && en_passant_square.covers(new_sq) 
                 && evasion_mask.covers(new_sq)

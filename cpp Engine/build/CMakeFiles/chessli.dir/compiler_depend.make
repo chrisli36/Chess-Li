@@ -1934,6 +1934,7 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/bitboard.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/board.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/castling_rights.hpp \
+  /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/chess_ui.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/move.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/piece.hpp \
   /Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/position.hpp \
@@ -3353,6 +3354,8 @@ CMakeFiles/chessli.dir/src/main.cpp.o: /Users/christopherli/Documents/Junior/Che
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:
+
+/Users/christopherli/Documents/Junior/Chess/cpp\ Engine/src/chess_ui.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/popcount.h:
 
