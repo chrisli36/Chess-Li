@@ -1,17 +1,23 @@
 #include "chess_ui.hpp"
 
+const sf::Color ChessUI::BROWN = sf::Color(240, 217, 181);
+const sf::Color ChessUI::TAN = sf::Color(181, 136, 99);
+const sf::Color ChessUI::RED = sf::Color(255, 0, 0, 50);
+const sf::Color ChessUI::GREEN = sf::Color(0, 255, 0, 50);
+const sf::Color ChessUI::BLUE = sf::Color(0, 0, 255, 50);
+
 void ChessUI::handle_event(const sf::Event& event) {
-        if (event.type == sf::Event::Closed) {
-            window.close();
-            return;
-        }
-        
-        if (waiting_for_promotion) {
-            handle_promotion_input(event);
-            return;
-        } 
+    if (event.type == sf::Event::Closed) {
+        window.close();
+        return;
+    }
+    
+    if (waiting_for_promotion) {
+        handle_promotion_input(event);
+    } else {
         handle_mouse_input(event);
     }
+}
 
 void ChessUI::render() {
     window.clear();
@@ -148,7 +154,7 @@ void ChessUI::highlight_selected_squares() {
         int file, rank;
         get_file_rank(prev_sq, &file, &rank);
         draw_square(file, rank, &RED);
-            
+        
         for (Move move : moves) {
             if (move.start() == prev_sq) {
                 file = move.end() % 8;

@@ -4,19 +4,6 @@
 #include "board.hpp"
 #include "move.hpp"
 
-const int SQUARE_SIZE = 60;
-const int CIRCLE_RADIUS = 25;
-const int CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
-const int BOARD_SIZE = 8;
-const int TEXTURE_SQUARE_SIZE = 333;
-const sf::Color BROWN = sf::Color(240, 217, 181);
-const sf::Color TAN = sf::Color(181, 136, 99);
-const sf::Color RED = sf::Color(255, 0, 0, 50);
-const sf::Color GREEN = sf::Color(0, 255, 0, 50);
-const sf::Color BLUE = sf::Color(0, 0, 255, 50);
-
-const int PIECES_MAP[] = { 5, 3, 2, 4, 1, 0 };
-
 class ChessUI {
 private:
     Board& board;
@@ -32,9 +19,24 @@ private:
     sf::Texture& piece_texture;
     sf::Sprite piece_sprite;
 
+    // Constants
+    int SQUARE_SIZE;
+    int CIRCLE_RADIUS;
+    int CIRCLE_START_OFFSET;
+    static const int TEXTURE_SQUARE_SIZE = 333;
+    static const sf::Color BROWN;
+    static const sf::Color TAN;
+    static const sf::Color RED;
+    static const sf::Color GREEN;
+    static const sf::Color BLUE;
+
+    static constexpr int PIECES_MAP[6] = { 5, 3, 2, 4, 1, 0 };
+
+
 public:
-    ChessUI(Board& board, std::vector<Move>& moves, sf::RenderWindow& window, sf::Texture& piece_texture)
-        : board(board), moves(moves), window(window), piece_texture(piece_texture) {
+    ChessUI(Board& board, std::vector<Move>& moves, sf::RenderWindow& window, sf::Texture& piece_texture, int square_size, int circle_radius)
+        : board(board), moves(moves), window(window), piece_texture(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius) {
+        CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
         piece_sprite.setTexture(piece_texture);
         piece_sprite.setScale(
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE,

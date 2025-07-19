@@ -200,8 +200,6 @@ std::vector<Move> Board::get_moves() {
         const uint8_t attacker_sq = attackers[0];
         evasion_mask = AttackBitboards::ray_between[attacker_sq][king_sq];
         evasion_mask.add_square(attacker_sq);
-        std::cout << "Evasion mask: " << evasion_mask << std::endl;
-        evasion_mask.print();
     }
 
     // calculate moves, limited by checks and pins
@@ -235,11 +233,14 @@ void Board::add_piece(const int sq, const Piece piece) {
 }
 
 void Board::rook_disabling_castling_move(const uint8_t sq) {
-    const uint8_t right = CastlingRights::Q * (sq == Position::A1)
-        + CastlingRights::K * (sq == Position::H1)
-        + CastlingRights::q * (sq == Position::A8)
-        + CastlingRights::k * (sq == Position::H8);
-    if (right == 0) return;
+    uint8_t right = 0;
+    switch (sq) {
+        case Position::A1: right = CastlingRights::Q; break;
+        case Position::H1: right = CastlingRights::K; break;
+        case Position::A8: right = CastlingRights::q; break;
+        case Position::H8: right = CastlingRights::k; break;
+        default: return;
+    }
 
     std::cout << "Removing castling rights for " << std::to_string(right) << std::endl;
     castling_rights.remove_right(right);
