@@ -80,7 +80,8 @@ void Board::reset() {
     en_passant_square.reset();
     controlled_squares.reset();
     attacker_count = 0;
-    attackers[0] = -1; attackers[1] = -1;
+    attackers[0] = Position::INVALID_SQUARE;
+    attackers[1] = Position::INVALID_SQUARE;
 }
 
 void Board::update_turn() {
@@ -131,11 +132,46 @@ bool Board::is_sliding_piece(const Piece piece) {
     return type == Piece::BISHOP || type == Piece::ROOK || type == Piece::QUEEN;
 }
 
+bool Board::two_pawns_en_passant(const int file, const int rank, const int dir[2], int* two_pawns_sq) {
+    int next_rank = rank + dir[0];
+    int next_file = file + dir[1];
+    *two_pawns_sq = Position::INVALID_SQUARE;
+
+    int sq2;
+    if (!is_valid_fr(next_file, next_rank, &sq2)) return false;
+    const int sq1 = rank * 8 + file;
+
+    const bool same_rank = rank == next_rank;
+    if (!same_rank) return false;
+
+    const bool both_are_pawns = squares[sq1].get_piece() == Piece::PAWN && squares[sq2].get_piece() == Piece::PAWN;
+    if (!both_are_pawns) return false;
+
+    const bool opposite_colors = squares[sq1].get_color() != squares[sq2].get_color();
+    if (!opposite_colors) return false;
+
+    const uint8_t friend_sq = (turn == squares[sq1].get_color()) ? sq1 : sq2;
+    const uint8_t enemy_sq = (turn == squares[sq1].get_color()) ? sq2 : sq1;
+    const uint8_t enemy_sq_back_one = enemy_sq + ((turn == Turn::WHITE) ? 8 : -8);
+    const bool enemy_just_moved_two = en_passant_square.covers(enemy_sq_back_one);
+    if (!enemy_just_moved_two) return false;
+
+    *two_pawns_sq = friend_sq;
+    return true;
+}
+
+bool Board::is_aligned(const int dir[2], const Piece piece) {
+    return (piece.get_piece() == Piece::QUEEN)
+        || (piece.get_piece() == Piece::ROOK && dir[0] * dir[1] == 0)
+        || (piece.get_piece() == Piece::BISHOP && dir[0] * dir[1] != 0);
+}
+
 void Board::calculate_pins() {
     const int king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
     const int king_rank = king_sq / 8;
     const int king_file = king_sq % 8;
     int new_rank, new_file, new_sq;
+    int two_pawns_sq;
     Piece new_piece;
     Bitboard pinned_ray = Bitboard();
     for (int i = 0; i < 64; ++i) {
@@ -147,21 +183,32 @@ void Board::calculate_pins() {
         pinned_ray.reset();
         new_rank = king_rank + dir[0];
         new_file = king_file + dir[1];
-        pinned_piece_sq = -1;
+        pinned_piece_sq = Position::INVALID_SQUARE;
+        two_pawns_sq = Position::INVALID_SQUARE;
         while (is_valid_fr(new_file, new_rank, &new_sq)) {
             pinned_ray.add_square(new_sq);
             new_piece = squares[new_sq];
             if (!new_piece.is_empty()) {
-                if (new_piece.is_friendly(turn)) {
-                    if (pinned_piece_sq == -1) {
+                if (two_pawns_sq == Position::INVALID_SQUARE
+                        && two_pawns_en_passant(new_file, new_rank, dir, &two_pawns_sq)) {
+                    std::cout << "Two pawns en passant, pinned pawn found at " << Move::to_algebraic(two_pawns_sq) << std::endl;
+                    new_rank += dir[0];
+                    new_file += dir[1];
+                } else if (new_piece.is_friendly(turn)) {
+                    if (pinned_piece_sq == Position::INVALID_SQUARE && two_pawns_sq == Position::INVALID_SQUARE) {
                         pinned_piece_sq = new_sq;
                     } else {
                         break;
                     }
-                } else if (is_sliding_piece(new_piece) && new_piece.is_enemy(turn)) {
-                    if (pinned_piece_sq != -1) {
+                } else if (is_aligned(dir, new_piece)) {
+                    if (pinned_piece_sq != Position::INVALID_SQUARE) {
                         pinned_limits[pinned_piece_sq] = pinned_ray;
+                    } else if (two_pawns_sq != Position::INVALID_SQUARE) {
+                        std::cout << "setting pinned limit for " << Move::to_algebraic(two_pawns_sq) << " to " << ~en_passant_square << std::endl;
+                        pinned_limits[two_pawns_sq] = ~en_passant_square;
                     }
+                    break;
+                } else {
                     break;
                 }
             }
@@ -180,7 +227,8 @@ std::vector<Move> Board::get_moves() {
     // calculate controlled squares
     controlled_squares.reset();
     attacker_count = 0;
-    attackers[0] = -1; attackers[1] = -1;
+    attackers[0] = Position::INVALID_SQUARE;
+    attackers[1] = Position::INVALID_SQUARE;
     for (Piece::PieceType piece : PIECES) {
         CTZLL_ITERATOR(sq, enemy_arr[piece]) {
             (this->*CALCULATE_CONTROLLED_FUNCTIONS[piece])(sq);
@@ -331,8 +379,8 @@ void Board::pawn_moves(const uint8_t sq) {
 
     // forward pawn moves
     new_rank = rank + forward;
-    if (is_valid_fr(file, new_rank, &new_sq) 
-            && squares[new_sq].is_empty() 
+    if (is_valid_fr(file, new_rank, &new_sq)
+            && squares[new_sq].is_empty()
             && can_move_under_pin(sq, new_sq)) {
         // pawn up one
         if (evasion_mask.covers(new_sq)) {
@@ -361,7 +409,9 @@ void Board::pawn_moves(const uint8_t sq) {
     // pawn captures
     Bitboard attacks = AttackBitboards::pawn_attacks[turn][sq];
     CTZLL_ITERATOR(new_sq, attacks) {
-        if (squares[new_sq].is_enemy(turn) && evasion_mask.covers(new_sq)) {
+        if (squares[new_sq].is_enemy(turn)
+                && evasion_mask.covers(new_sq)
+                && can_move_under_pin(sq, new_sq)) {
             if ((rank == 6 && turn == Turn::WHITE) || (rank == 1 && turn == Turn::BLACK)) {
                 moves.push_back(Move(sq, new_sq, MoveFlag::QUEEN_PROMOTION));
                 moves.push_back(Move(sq, new_sq, MoveFlag::ROOK_PROMOTION));
@@ -370,10 +420,10 @@ void Board::pawn_moves(const uint8_t sq) {
             } else {
                 moves.push_back(Move(sq, new_sq));
             }
-        } else if (squares[new_sq].is_empty() 
-                && en_passant_square.covers(new_sq) 
+        } else if (squares[new_sq].is_empty()
+                && en_passant_square.covers(new_sq)
                 && evasion_mask.covers(new_sq)
-            ) {
+                && can_move_under_pin(sq, new_sq)) {
             moves.push_back(Move(sq, new_sq, MoveFlag::EN_PASSANT_CAPTURE));
         }
     }

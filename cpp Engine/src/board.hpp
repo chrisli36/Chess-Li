@@ -118,6 +118,8 @@ private:
     bool is_sliding_piece(const Piece piece);
     void calculate_pins();
     bool can_move_under_pin(const uint8_t sq, const uint8_t new_sq);
+    bool two_pawns_en_passant(const int file, const int rank, const int dir[2], int* two_pawns_sq);
+    bool is_aligned(const int dir[2], const Piece piece);
 
     // MOVE GENERATION
     void pawn_controlled(const uint8_t sq);
