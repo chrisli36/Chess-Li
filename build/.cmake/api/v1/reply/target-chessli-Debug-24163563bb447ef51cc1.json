@@ -25,13 +25,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 12,
+				"line" : 25,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 19,
+				"line" : 33,
 				"parent" : 0
 			}
 		]
@@ -42,7 +42,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++17 -arch arm64"
+					"fragment" : "-g -O1 -g -std=gnu++17 -arch arm64"
 				}
 			],
 			"includes" : 
@@ -50,7 +50,7 @@
 				{
 					"backtrace" : 2,
 					"isSystem" : true,
-					"path" : "/opt/homebrew/include"
+					"path" : "/opt/homebrew/opt/sfml@2/include"
 				}
 			],
 			"language" : "CXX",
@@ -66,7 +66,8 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		}
 	],
@@ -76,7 +77,7 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-g",
+				"fragment" : "-g -O1 -g",
 				"role" : "flags"
 			},
 			{
@@ -84,22 +85,22 @@
 				"role" : "flags"
 			},
 			{
-				"fragment" : "-Wl,-rpath,/opt/homebrew/lib",
+				"fragment" : "-Wl,-rpath,/opt/homebrew/opt/sfml@2/lib",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/opt/homebrew/lib/libsfml-graphics.2.6.2.dylib",
+				"fragment" : "/opt/homebrew/opt/sfml@2/lib/libsfml-graphics.2.6.2.dylib",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/opt/homebrew/lib/libsfml-window.2.6.2.dylib",
+				"fragment" : "/opt/homebrew/opt/sfml@2/lib/libsfml-window.2.6.2.dylib",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/opt/homebrew/lib/libsfml-system.2.6.2.dylib",
+				"fragment" : "/opt/homebrew/opt/sfml@2/lib/libsfml-system.2.6.2.dylib",
 				"role" : "libraries"
 			}
 		],
@@ -120,7 +121,8 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		}
 	],
@@ -142,6 +144,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/chess_ui.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/engine.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],

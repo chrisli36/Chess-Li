@@ -1,4 +1,5 @@
 #include "chess_ui.hpp"
+#include <SFML/System.hpp>
 
 const sf::Color ChessUI::BROWN = sf::Color(240, 217, 181);
 const sf::Color ChessUI::TAN = sf::Color(181, 136, 99);
@@ -6,14 +7,27 @@ const sf::Color ChessUI::RED = sf::Color(255, 0, 0, 50);
 const sf::Color ChessUI::GREEN = sf::Color(0, 255, 0, 50);
 const sf::Color ChessUI::BLUE = sf::Color(0, 0, 255, 50);
 
+void ChessUI::reset_state() {
+    moves = board->get_moves();
+    prev_sq = -1;
+    waiting_for_promotion = false;
+}
+
 void ChessUI::handle_event(const sf::Event& event) {
     if (event.type == sf::Event::Closed) {
         window.close();
         return;
     }
     
-    if (waiting_for_promotion) {
+    if (bot_mode && board->get_turn() != player_color) {
+        make_engine_move();
+        reset_state();
+    } else if (waiting_for_promotion) {
         handle_promotion_input(event);
+    } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left) {
+        if (bot_mode) board->undo_move();
+        board->undo_move();
+        reset_state();
     } else {
         handle_mouse_input(event);
     }
@@ -27,10 +41,10 @@ void ChessUI::render() {
         for (int file = 0; file < 8; ++file) {
             draw_square(file, rank, (file + rank) % 2 == 0 ? &BROWN : &TAN);
 
-            // highlight controlled squares
-            if (board.is_controlled(file + rank * 8)) {
-                draw_circle(file, rank, &BLUE);
-            }
+            // // highlight controlled squares
+            // if (board->is_controlled(file + rank * 8)) {
+            //     draw_circle(file, rank, &BLUE);
+            // }
         }
     }
 
@@ -69,10 +83,9 @@ void ChessUI::handle_promotion_input(const sf::Event& event) {
         }
         
         if (promotion_flag != MoveFlag::NO_FLAG) {
-            // Create the promotion move with the selected piece
             Move promotion_move(pending_promotion_move.start(), pending_promotion_move.end(), promotion_flag);
-            board.make_move(&promotion_move);
-            moves = board.get_moves();
+            board->make_move(&promotion_move);
+            moves = board->get_moves();
             prev_sq = -1;
             waiting_for_promotion = false;
         }
@@ -97,16 +110,16 @@ void ChessUI::handle_mouse_input(const sf::Event& event) {
                     prev_sq = -1;
                 } else {
                     // Normal move
-                    board.make_move(&move);
-                    moves = board.get_moves();
-                    prev_sq = -1;
+                    std::cout << "making move: " << move.to_string() << "\n";
+                    board->make_move(&move);
+                    reset_state();
                 }
-            } else if (!board.is_empty(curr_sq)) {
+            } else if (!board->is_empty(curr_sq)) {
                 prev_sq = curr_sq;
             } else {
                 prev_sq = -1;
             }
-        } else if (!board.is_empty(curr_sq)) {
+        } else if (!board->is_empty(curr_sq)) {
             prev_sq = curr_sq;
         }
     }
@@ -132,7 +145,7 @@ void ChessUI::draw_pieces() {
     Turn piece_color; 
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
-            piece = board.get_piece(file, rank);
+            piece = board->get_piece(file, rank);
             if (piece.is_empty()) continue;
             piece_location = PIECES_MAP[piece.get_piece()];
             piece_color = piece.get_color();
@@ -190,4 +203,15 @@ Move ChessUI::get_move(const int start, const int end) const {
         }
     }
     return Move();
+}
+
+void ChessUI::make_engine_move() {
+    if (!bot_mode || engine == nullptr) return;
+    if (board->get_game_state() != GameState::IN_PROGRESS) return;
+    
+    std::cout << "board turn: " << (board->get_turn() == Turn::WHITE ? "white" : "black") << "\n";
+    Move engine_move = engine->get_best_move(engine_depth);
+    board->make_move(&engine_move);
+
+    std::cout << "Engine played: " << engine_move.to_algebraic(engine_move.start()) << "->" << engine_move.to_algebraic(engine_move.end()) << std::endl;
 }

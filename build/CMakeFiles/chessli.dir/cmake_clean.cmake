@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chessli.dir/src/board.cpp.o.d"
   "CMakeFiles/chessli.dir/src/chess_ui.cpp.o"
   "CMakeFiles/chessli.dir/src/chess_ui.cpp.o.d"
+  "CMakeFiles/chessli.dir/src/engine.cpp.o"
+  "CMakeFiles/chessli.dir/src/engine.cpp.o.d"
   "CMakeFiles/chessli.dir/src/main.cpp.o"
   "CMakeFiles/chessli.dir/src/main.cpp.o.d"
   "chessli"

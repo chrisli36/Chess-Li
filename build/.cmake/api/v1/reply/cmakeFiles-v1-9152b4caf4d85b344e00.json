@@ -188,23 +188,23 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/homebrew/lib/cmake/SFML/SFMLConfigVersion.cmake"
+			"path" : "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLConfigVersion.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/homebrew/lib/cmake/SFML/SFMLConfig.cmake"
+			"path" : "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLConfig.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/homebrew/lib/cmake/SFML/SFMLSharedTargets.cmake"
+			"path" : "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLSharedTargets.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/homebrew/lib/cmake/SFML/SFMLSharedTargets-release.cmake"
+			"path" : "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLSharedTargets-release.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/homebrew/lib/cmake/SFML/SFMLConfigDependencies.cmake"
+			"path" : "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLConfigDependencies.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",

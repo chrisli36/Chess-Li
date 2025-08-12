@@ -3,16 +3,23 @@
 #include <SFML/Graphics.hpp>
 #include "board.hpp"
 #include "move.hpp"
+#include "engine.hpp"
 
 class ChessUI {
 private:
-    Board& board;
-    std::vector<Move>& moves;
+    Board* board = nullptr;
+    std::vector<Move> moves;
     
     // UI state variables
     int prev_sq = -1;
     bool waiting_for_promotion = false;
     Move pending_promotion_move;
+    
+    // Engine variables
+    Engine* engine = nullptr;
+    bool bot_mode = false;
+    int engine_depth = 3;
+    Turn player_color = Turn::WHITE;
     
     // SFML objects
     sf::RenderWindow& window;
@@ -34,14 +41,27 @@ private:
 
 
 public:
-    ChessUI(Board& board, std::vector<Move>& moves, sf::RenderWindow& window, sf::Texture& piece_texture, int square_size, int circle_radius)
-        : board(board), moves(moves), window(window), piece_texture(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius) {
+    ChessUI(Board* board, sf::RenderWindow& window, sf::Texture& piece_texture, int square_size, int circle_radius)
+        : board(board), moves(board->get_moves()), window(window), piece_texture(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius) {
         CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
         piece_sprite.setTexture(piece_texture);
         piece_sprite.setScale(
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE,
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE
         );
+    }
+
+    ChessUI(Board* board, sf::RenderWindow& window, sf::Texture& piece_texture, int square_size, int circle_radius, 
+            Engine* engine, int depth = 3, Turn player_color = Turn::WHITE)
+        : board(board), moves(board->get_moves()), window(window), piece_texture(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius), 
+            engine(engine), engine_depth(depth), player_color(player_color) {
+        CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
+        piece_sprite.setTexture(piece_texture);
+        piece_sprite.setScale(
+            static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE,
+            static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE
+        );
+        bot_mode = true;
     }
 
     void handle_event(const sf::Event& event);
@@ -58,4 +78,6 @@ private:
     void get_file_rank(const int square, int* file, int* rank) const;
     bool is_a_move(const int start, const int end) const;
     Move get_move(const int start, const int end) const;
+    void make_engine_move();
+    void reset_state();
 };

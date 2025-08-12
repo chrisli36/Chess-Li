@@ -3,6 +3,8 @@
 #include <string>
 
 #include "piece.hpp"
+#include "castling_rights.hpp"
+#include "bitboard.hpp"
 
 enum MoveFlag : uint8_t {
     NO_FLAG             = 0,
@@ -64,4 +66,13 @@ struct Move {
     std::string to_string() const { 
         return to_algebraic(start()) + "->" + to_algebraic(end());
     }
+};
+
+struct UnMove {
+    Move move;
+    Piece taken_piece;
+    Bitboard en_passant_square;
+    CastlingRights castling_rights;
+
+    UnMove(Move m, Piece t, Bitboard e, CastlingRights c) : move(m), taken_piece(t), en_passant_square(e), castling_rights(c) {}
 };

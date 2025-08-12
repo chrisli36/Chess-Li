@@ -80,15 +80,15 @@ if __name__ == "__main__":
     li = Engine()
     board = Board()
 
-    for i in range(1, 6):
-        a = time.time_ns()
-        li.positions = 0
-        engine_eval = li.minimax(board, i, float('-inf'), float('inf'))
-        b = time.time_ns()
-        print(f"depth={i}: evaluated {li.positions} positions in {(b - a) // 10**6} ms")
-    
-    # for i in range(1, 5):
+    # for i in range(1, 6):
     #     a = time.time_ns()
-    #     positions = li.search(board, i)
+    #     li.positions = 0
+    #     engine_eval = li.minimax(board, i, float('-inf'), float('inf'))
     #     b = time.time_ns()
-    #     print(f"depth={i}: calculated {positions} in {(b - a) // 10**6} ms")
+    #     print(f"depth={i}: evaluated {li.positions} positions in {(b - a) // 10**6} ms")
+    
+    for i in range(1, 5):
+        a= time.time_ns()
+        positions = li.search(board, i)
+        b = time.time_ns()
+        print(f"depth={i}: calculated {positions} in {(b - a) // 10**6} ms")

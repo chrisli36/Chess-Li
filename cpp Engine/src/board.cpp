@@ -1,4 +1,5 @@
 #include "board.hpp"
+#include "move.hpp"
 #include "position.hpp"
 #include "attacks.hpp"
 #include <iostream>
@@ -12,7 +13,7 @@ Board::Board(const std::string fen) {
     Piece piece;
     for (char c : fen) {
         i++;
-        if (sq == 64) {
+        if (sq == BOARD_SQUARES) {
             break;
         }
         if (c == '/') {
@@ -24,7 +25,7 @@ Board::Board(const std::string fen) {
             }
             sq += (c - '0');
         } else {
-            real_sq = (7 - sq / 8) * 8 + (sq % 8);
+            real_sq = (BOARD_SIZE - 1 - sq / BOARD_SIZE) * BOARD_SIZE + (sq % BOARD_SIZE);
             piece = Piece::from_fen(c);
             squares[real_sq] = piece;
             piece_bitboards[piece.get_color()][piece.get_piece()].add_square(real_sq);
@@ -42,10 +43,10 @@ Board::Board(const std::string fen) {
     castling_rights = CastlingRights(0);
     while (fen[i] != ' ') {
         switch (fen[i]) {
-            case 'K': castling_rights.add_right(CastlingRights::K);
-            case 'Q': castling_rights.add_right(CastlingRights::Q);
-            case 'k': castling_rights.add_right(CastlingRights::k);
-            case 'q': castling_rights.add_right(CastlingRights::q);
+            case 'K': castling_rights.add_right(CastlingRights::K); break;
+            case 'Q': castling_rights.add_right(CastlingRights::Q); break;
+            case 'k': castling_rights.add_right(CastlingRights::k); break;
+            case 'q': castling_rights.add_right(CastlingRights::q); break;
         }
         i++;
     }
@@ -55,8 +56,8 @@ Board::Board(const std::string fen) {
     if (fen[i] != '-') {
         int file = fen[i] - 'a';
         i++;
-        int rank = 8 - (fen[i] - '0');
-        en_passant_square = Bitboard(1ULL << (rank * 8 + file));
+        int rank = BOARD_SIZE - (fen[i] - '0');
+        en_passant_square = Bitboard(1ULL << (rank * BOARD_SIZE + file));
     } else {
         en_passant_square = Bitboard(0);
     }
@@ -82,6 +83,7 @@ void Board::reset() {
     attacker_count = 0;
     attackers[0] = Position::INVALID_SQUARE;
     attackers[1] = Position::INVALID_SQUARE;
+    calculated = false;
 }
 
 void Board::update_turn() {
@@ -93,17 +95,17 @@ void Board::update_turn() {
     enemy_arr = piece_bitboards[!turn];
 }
 
-bool Board::is_valid_fr(const int file, const int rank, int* sq) {
-    *sq = rank * 8 + file;
-    return (file >= 0 && file < 8 && rank >= 0 && rank < 8);
+bool Board::is_valid_fr(const int file, const int rank, int* sq) const {
+    *sq = rank * BOARD_SIZE + file;
+    return (static_cast<unsigned>(file) < BOARD_SIZE && static_cast<unsigned>(rank) < BOARD_SIZE);
 }
 
 void Board::print() const {
-    for (int rank = 7; rank >= 0; --rank) {
+    for (int rank = BOARD_SIZE - 1; rank >= 0; --rank) {
         std::cout << "  " << std::string(33, '-') << "\n";
         std::cout << rank << " |";
-        for (int file = 0; file < 8; ++file) {
-            std::cout << " " << squares[rank * 8 + file].to_char() << " |";
+        for (int file = 0; file < BOARD_SIZE; ++file) {
+            std::cout << " " << squares[rank * BOARD_SIZE + file].to_char() << " |";
         }
         std::cout << "\n";
     }
@@ -118,8 +120,8 @@ void Board::print() const {
     std::cout << "\n";
     std::cout << "En Passant: ";
     if (en_passant_square) {
-        int file = __builtin_ctzll(en_passant_square) % 8;
-        int rank = 8 - (__builtin_ctzll(en_passant_square) / 8);
+        int file = __builtin_ctzll(en_passant_square) % BOARD_SIZE;
+        int rank = BOARD_SIZE - (__builtin_ctzll(en_passant_square) / BOARD_SIZE);
         std::cout << static_cast<char>('a' + file) << rank;
     } else {
         std::cout << "-";
@@ -127,19 +129,14 @@ void Board::print() const {
     std::cout << "\n";
 }
 
-bool Board::is_sliding_piece(const Piece piece) {
-    const Piece::PieceType type = piece.get_piece();
-    return type == Piece::BISHOP || type == Piece::ROOK || type == Piece::QUEEN;
-}
-
-bool Board::two_pawns_en_passant(const int file, const int rank, const int dir[2], int* two_pawns_sq) {
+bool Board::two_pawns_en_passant(const int file, const int rank, const int dir[2], int* two_pawns_sq) const {
     int next_rank = rank + dir[0];
     int next_file = file + dir[1];
     *two_pawns_sq = Position::INVALID_SQUARE;
 
     int sq2;
     if (!is_valid_fr(next_file, next_rank, &sq2)) return false;
-    const int sq1 = rank * 8 + file;
+    const int sq1 = rank * BOARD_SIZE + file;
 
     const bool same_rank = rank == next_rank;
     if (!same_rank) return false;
@@ -152,7 +149,7 @@ bool Board::two_pawns_en_passant(const int file, const int rank, const int dir[2
 
     const uint8_t friend_sq = (turn == squares[sq1].get_color()) ? sq1 : sq2;
     const uint8_t enemy_sq = (turn == squares[sq1].get_color()) ? sq2 : sq1;
-    const uint8_t enemy_sq_back_one = enemy_sq + ((turn == Turn::WHITE) ? 8 : -8);
+    const uint8_t enemy_sq_back_one = enemy_sq + ((turn == Turn::WHITE) ? PAWN_MOVE_ONE : -PAWN_MOVE_ONE);
     const bool enemy_just_moved_two = en_passant_square.covers(enemy_sq_back_one);
     if (!enemy_just_moved_two) return false;
 
@@ -160,7 +157,7 @@ bool Board::two_pawns_en_passant(const int file, const int rank, const int dir[2
     return true;
 }
 
-bool Board::is_aligned(const int dir[2], const Piece piece) {
+bool Board::is_aligned(const int dir[2], const Piece piece) const {
     return (piece.get_piece() == Piece::QUEEN)
         || (piece.get_piece() == Piece::ROOK && dir[0] * dir[1] == 0)
         || (piece.get_piece() == Piece::BISHOP && dir[0] * dir[1] != 0);
@@ -168,13 +165,13 @@ bool Board::is_aligned(const int dir[2], const Piece piece) {
 
 void Board::calculate_pins() {
     const int king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
-    const int king_rank = king_sq / 8;
-    const int king_file = king_sq % 8;
+    const int king_rank = king_sq / BOARD_SIZE;
+    const int king_file = king_sq % BOARD_SIZE;
     int new_rank, new_file, new_sq;
     int two_pawns_sq;
     Piece new_piece;
     Bitboard pinned_ray = Bitboard();
-    for (int i = 0; i < 64; ++i) {
+    for (int i = 0; i < BOARD_SQUARES; ++i) {
         pinned_limits[i].reset();
     }
     int pinned_piece_sq;
@@ -191,7 +188,7 @@ void Board::calculate_pins() {
             if (!new_piece.is_empty()) {
                 if (two_pawns_sq == Position::INVALID_SQUARE
                         && two_pawns_en_passant(new_file, new_rank, dir, &two_pawns_sq)) {
-                    std::cout << "Two pawns en passant, pinned pawn found at " << Move::to_algebraic(two_pawns_sq) << std::endl;
+                    // std::cout << "Two pawns en passant, pinned pawn found at " << Move::to_algebraic(two_pawns_sq) << std::endl;
                     new_rank += dir[0];
                     new_file += dir[1];
                 } else if (new_piece.is_friendly(turn)) {
@@ -204,7 +201,7 @@ void Board::calculate_pins() {
                     if (pinned_piece_sq != Position::INVALID_SQUARE) {
                         pinned_limits[pinned_piece_sq] = pinned_ray;
                     } else if (two_pawns_sq != Position::INVALID_SQUARE) {
-                        std::cout << "setting pinned limit for " << Move::to_algebraic(two_pawns_sq) << " to " << ~en_passant_square << std::endl;
+                        // std::cout << "setting pinned limit for " << Move::to_algebraic(two_pawns_sq) << " to " << ~en_passant_square << std::endl;
                         pinned_limits[two_pawns_sq] = ~en_passant_square;
                     }
                     break;
@@ -218,8 +215,26 @@ void Board::calculate_pins() {
     }
 }
 
+GameState Board::get_game_state() {
+    if (!calculated) calculate_moves();
+
+    if (moves.empty()) {
+        if (attacker_count == 0) {
+            return GameState::DRAW;
+        } else {
+            return turn == Turn::WHITE ? GameState::BLACK_WIN : GameState::WHITE_WIN;
+        }
+    }
+    return GameState::IN_PROGRESS;
+}
+
 std::vector<Move> Board::get_moves() {
-    std::cout << "Calculating moves..." << std::endl;
+    if (!calculated) calculate_moves();
+    return moves;
+}
+
+void Board::calculate_moves() {
+    if (calculated) return;
     uint8_t sq;
     moves.clear();
     evasion_mask = Bitboard(~0ULL);
@@ -242,7 +257,7 @@ std::vector<Move> Board::get_moves() {
     if (attacker_count == 2) {
         const uint8_t king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
         king_moves(king_sq);
-        return moves;
+        return;
     } else if (attacker_count == 1) {
         const uint8_t king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
         const uint8_t attacker_sq = attackers[0];
@@ -256,7 +271,6 @@ std::vector<Move> Board::get_moves() {
             (this->*CALCULATE_MOVES_FUNCTIONS[piece])(sq);
         }
     }
-    return moves;
 }
 
 void Board::erase_piece(const int sq) {
@@ -290,7 +304,6 @@ void Board::rook_disabling_castling_move(const uint8_t sq) {
         default: return;
     }
 
-    std::cout << "Removing castling rights for " << std::to_string(right) << std::endl;
     castling_rights.remove_right(right);
 }
 
@@ -299,6 +312,8 @@ void Board::make_move(const Move* move) {
     const uint8_t end = move->end();
     const Piece start_piece = squares[start];
     const Piece end_piece = squares[end];
+    Bitboard prev_en_passant_square = en_passant_square;
+    const CastlingRights prev_castling_rights = castling_rights;
 
     // move the piece to the new square, erasing the old square
     erase_piece(end);
@@ -308,27 +323,27 @@ void Board::make_move(const Move* move) {
     // account for special moves
     en_passant_square.reset();
     if (move->is_en_passant()) {
-        std::cout << "En passant capture." << std::endl;
-        erase_piece(end + ((turn == Turn::WHITE) ? -8 : 8));
+        // std::cout << "En passant capture." << std::endl;
+        erase_piece(end + ((turn == Turn::WHITE) ? -PAWN_MOVE_ONE : PAWN_MOVE_ONE));
     } else if (move->is_pawn_up_two()) {
-        std::cout << "Pawn moved up two squares." << std::endl;
-        en_passant_square = Bitboard(1ULL << (start + ((turn == Turn::WHITE) ? 8 : -8)));
+        // std::cout << "Pawn moved up two squares." << std::endl;
+        en_passant_square = Bitboard(1ULL << (start + ((turn == Turn::WHITE) ? PAWN_MOVE_ONE : -PAWN_MOVE_ONE)));
     } else if (move->is_castle()) {
-        std::cout << "Castling move." << std::endl;
+        // std::cout << "Castling move." << std::endl;
         if (move->is_castle_kingside()) {
-            std::cout << "Kingside castle." << std::endl;
+            // std::cout << "Kingside castle." << std::endl;
             Piece rook = squares[end + 1];
             erase_piece(end + 1);
             add_piece(end - 1, rook);
         } else if (move->is_castle_queenside()) {
-            std::cout << "Queenside castle." << std::endl;
+            // std::cout << "Queenside castle." << std::endl;
             Piece rook = squares[end - 2];
             erase_piece(end - 2);
             add_piece(end + 1, rook);
         }
     } else if (move->is_promotion()) {
         Piece promotion_piece = move->promotion_piece(turn);
-        std::cout << "Promotion move" << std::endl;
+        // std::cout << "Promotion move" << std::endl;
         erase_piece(end);
         add_piece(end, promotion_piece);
     }
@@ -346,22 +361,85 @@ void Board::make_move(const Move* move) {
     if (start_piece.get_piece() == Piece::ROOK) rook_disabling_castling_move(start); 
     if (end_piece.get_piece() == Piece::ROOK) rook_disabling_castling_move(end);
 
+    history.push_back(
+        UnMove(
+            Move(start, end, move->flag()), 
+            end_piece,
+            prev_en_passant_square,
+            prev_castling_rights
+        )
+    );
     turn = static_cast<Turn>(!turn);
     update_turn();
+    calculated = false;
 }
 
-void Board::add_king_attacker(const uint8_t start, Bitboard attacks) {
+void Board::undo_move() {
+    if (history.empty()) return;
+
+    const UnMove un_move = history.back();
+    const Move move = un_move.move;
+    const uint8_t start = move.start();
+    const uint8_t end = move.end();
+
+    const Piece taken_piece = un_move.taken_piece;
+    const Piece start_piece = squares[end];
+
+    // move the piece back to the old square
+    erase_piece(end);
+    add_piece(start, start_piece);
+    if (!taken_piece.is_empty() && !move.is_en_passant()) {
+        add_piece(end, taken_piece);
+    }
+    en_passant_square = un_move.en_passant_square;
+    castling_rights = un_move.castling_rights;
+
+    // account for special moves
+    if (move.is_en_passant()) {
+        // std::cout << "Undoing en passant capture." << std::endl;
+        const Piece pawn = (turn == Turn::WHITE) ? Piece::WHITE_PAWN : Piece::BLACK_PAWN;
+        const int actual_end = end + ((turn == Turn::WHITE) ? PAWN_MOVE_ONE : -PAWN_MOVE_ONE);
+        add_piece(actual_end, pawn);
+    } else if (move.is_pawn_up_two()) {
+        // std::cout << "Undoing pawn moved up two squares." << std::endl;
+    } else if (move.is_castle()) {
+        // std::cout << "Undoing castling move." << std::endl;
+        if (move.is_castle_kingside()) {
+            // std::cout << "Undoing kingside castle." << std::endl;
+            const Piece rook = squares[end - 1];
+            erase_piece(end - 1);
+            add_piece(end + 1, rook);
+        } else if (move.is_castle_queenside()) {
+            // std::cout << "Undoing queenside castle." << std::endl;
+            const Piece rook = squares[end + 1];
+            erase_piece(end + 1);
+            add_piece(end - 2, rook);
+        }
+    } else if (move.is_promotion()) {
+        // std::cout << "Undoing promotion move." << std::endl;
+        const Piece pawn = (turn == Turn::WHITE) ? Piece::BLACK_PAWN : Piece::WHITE_PAWN;
+        erase_piece(start);
+        add_piece(start, pawn);
+    }
+
+    history.pop_back();
+    turn = static_cast<Turn>(!turn);
+    update_turn();
+    calculated = false;
+}
+
+inline void Board::add_king_attacker(const uint8_t start, Bitboard attacks) {
     if (friend_arr[Piece::KING] & attacks) {
         assert(attacker_count < 2 && "Too many checkers!");
-        std::cout << "Adding king attacker: " << squares[start].to_char() << " on "<< Move::to_algebraic(start) << std::endl;
+        // std::cout << "Adding king attacker: " << squares[start].to_char() << " on "<< Move::to_algebraic(start) << std::endl;
         attackers[attacker_count++] = start;
     }
 }
 
-bool Board::can_move_under_pin(const uint8_t sq, const uint8_t new_sq) {
+inline bool Board::can_move_under_pin(const uint8_t sq, const uint8_t new_sq) {
     if (!pinned_limits[sq]) return true;
-    std::cout << "Checking if " << Move::to_algebraic(sq) << " can move to " << Move::to_algebraic(new_sq) << std::endl;
-    pinned_limits[sq].print();
+    // std::cout << "Checking if " << Move::to_algebraic(sq) << " can move to " << Move::to_algebraic(new_sq) << std::endl;
+    // pinned_limits[sq].print();
     return pinned_limits[sq].covers(new_sq);
 }
 
@@ -372,9 +450,10 @@ void Board::pawn_controlled(const uint8_t sq) {
 }
 
 void Board::pawn_moves(const uint8_t sq) {
-    const int rank = sq / 8;
-    const int file = sq % 8;
-    const int forward = (turn == Turn::WHITE) ? 1 : -1;
+    const int rank = sq / BOARD_SIZE;
+    const int file = sq % BOARD_SIZE;
+    const int forward = (turn == Turn::WHITE) ? PAWN_FORWARD_WHITE : PAWN_FORWARD_BLACK;
+    const bool is_white = (turn == Turn::WHITE);
     int new_rank, new_file, new_sq;
 
     // forward pawn moves
@@ -384,7 +463,7 @@ void Board::pawn_moves(const uint8_t sq) {
             && can_move_under_pin(sq, new_sq)) {
         // pawn up one
         if (evasion_mask.covers(new_sq)) {
-            if ((rank == 6 && turn == Turn::WHITE) || (rank == 1 && turn == Turn::BLACK)) {
+            if ((rank == PAWN_PROMOTION_RANK_WHITE && is_white) || (rank == PAWN_PROMOTION_RANK_BLACK && !is_white)) {
                 moves.push_back(Move(sq, new_sq, MoveFlag::QUEEN_PROMOTION));
                 moves.push_back(Move(sq, new_sq, MoveFlag::ROOK_PROMOTION));
                 moves.push_back(Move(sq, new_sq, MoveFlag::BISHOP_PROMOTION));
@@ -394,7 +473,7 @@ void Board::pawn_moves(const uint8_t sq) {
             }
         }
         // pawn up two
-        if ((turn == Turn::WHITE && rank == 1) || (turn == Turn::BLACK && rank == 6)) {
+        if ((is_white && rank == PAWN_START_RANK_WHITE) || (!is_white && rank == PAWN_START_RANK_BLACK)) {
             new_rank = rank + forward + forward;
             if (is_valid_fr(file, new_rank, &new_sq) 
                     && squares[new_sq].is_empty()
@@ -412,7 +491,7 @@ void Board::pawn_moves(const uint8_t sq) {
         if (squares[new_sq].is_enemy(turn)
                 && evasion_mask.covers(new_sq)
                 && can_move_under_pin(sq, new_sq)) {
-            if ((rank == 6 && turn == Turn::WHITE) || (rank == 1 && turn == Turn::BLACK)) {
+            if ((rank == PAWN_PROMOTION_RANK_WHITE && is_white) || (rank == PAWN_PROMOTION_RANK_BLACK && !is_white)) {
                 moves.push_back(Move(sq, new_sq, MoveFlag::QUEEN_PROMOTION));
                 moves.push_back(Move(sq, new_sq, MoveFlag::ROOK_PROMOTION));
                 moves.push_back(Move(sq, new_sq, MoveFlag::BISHOP_PROMOTION));
@@ -450,8 +529,8 @@ void Board::knight_moves(const uint8_t sq) {
 }
 
 void Board::bishop_controlled(const uint8_t sq) {
-    const int rank = sq / 8;
-    const int file = sq % 8;
+    const int rank = sq / BOARD_SIZE;
+    const int file = sq % BOARD_SIZE;
     int new_rank, new_file, new_sq;
     Bitboard attacks = Bitboard();
 
@@ -470,30 +549,32 @@ void Board::bishop_controlled(const uint8_t sq) {
 }
 
 void Board::bishop_moves(const uint8_t sq) {
-    const int rank = sq / 8;
-    const int file = sq % 8;
+    const int rank = sq / BOARD_SIZE;
+    const int file = sq % BOARD_SIZE;
     int new_rank, new_file, new_sq;
 
     for (auto& dir : BISHOP_DIRECTIONS) {
         MOVE_ITERATOR(dir, rank, file, new_rank, new_file, new_sq) {
-            if (!evasion_mask.covers(new_sq)) continue;
             if (!can_move_under_pin(sq, new_sq)) break;
+            if (squares[new_sq].is_friendly(turn)) break;
+
+            bool evasion_mask_covers = evasion_mask.covers(new_sq);
 
             if (squares[new_sq].is_empty()) {
-                moves.push_back(Move(sq, new_sq));
+                if (evasion_mask_covers) moves.push_back(Move(sq, new_sq));
+                continue;
             } else if (squares[new_sq].is_enemy(turn)) {
-                moves.push_back(Move(sq, new_sq));
-                break;
-            } else {
+                if (evasion_mask_covers) moves.push_back(Move(sq, new_sq));
                 break;
             }
+            throw std::runtime_error("Bishop move error, square " + std::to_string(new_sq) + " is not friendly, empty, or enemy");
         }
     }
 }
 
 void Board::rook_controlled(const uint8_t sq) {
-    const int rank = sq / 8;
-    const int file = sq % 8;
+    const int rank = sq / BOARD_SIZE;
+    const int file = sq % BOARD_SIZE;
     int new_rank, new_file, new_sq;
     Bitboard attacks = Bitboard();
 
@@ -512,23 +593,25 @@ void Board::rook_controlled(const uint8_t sq) {
 }
 
 void Board::rook_moves(const uint8_t sq) {
-    const int rank = sq / 8;
-    const int file = sq % 8;
+    const int rank = sq / BOARD_SIZE;
+    const int file = sq % BOARD_SIZE;
     int new_rank, new_file, new_sq;
 
     for (auto& dir : ROOK_DIRECTIONS) {
         MOVE_ITERATOR(dir, rank, file, new_rank, new_file, new_sq) {
-            if (!evasion_mask.covers(new_sq)) continue;
             if (!can_move_under_pin(sq, new_sq)) break;
+            if (squares[new_sq].is_friendly(turn)) break;
+
+            bool evasion_mask_covers = evasion_mask.covers(new_sq);
 
             if (squares[new_sq].is_empty()) {
-                moves.push_back(Move(sq, new_sq));
+                if (evasion_mask_covers) moves.push_back(Move(sq, new_sq));
+                continue;
             } else if (squares[new_sq].is_enemy(turn)) {
-                moves.push_back(Move(sq, new_sq));
-                break;
-            } else {
+                if (evasion_mask_covers) moves.push_back(Move(sq, new_sq));
                 break;
             }
+            throw std::runtime_error("Rook move error, square " + std::to_string(new_sq) + " is not friendly, empty, or enemy");
         }
     }
 }

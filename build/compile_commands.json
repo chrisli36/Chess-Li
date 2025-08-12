@@ -1,20 +1,26 @@
 [
 {
   "directory": "/Users/christopherli/Documents/Junior/Chess/build",
-  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/include -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/main.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/main.cpp\"",
+  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/opt/sfml@2/include -g -O1 -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/main.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/main.cpp\"",
   "file": "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/main.cpp",
   "output": "CMakeFiles/chessli.dir/src/main.cpp.o"
 },
 {
   "directory": "/Users/christopherli/Documents/Junior/Chess/build",
-  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/include -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/board.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp\"",
+  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/opt/sfml@2/include -g -O1 -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/board.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp\"",
   "file": "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/board.cpp",
   "output": "CMakeFiles/chessli.dir/src/board.cpp.o"
 },
 {
   "directory": "/Users/christopherli/Documents/Junior/Chess/build",
-  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/include -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/chess_ui.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/chess_ui.cpp\"",
+  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/opt/sfml@2/include -g -O1 -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/chess_ui.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/chess_ui.cpp\"",
   "file": "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/chess_ui.cpp",
   "output": "CMakeFiles/chessli.dir/src/chess_ui.cpp.o"
+},
+{
+  "directory": "/Users/christopherli/Documents/Junior/Chess/build",
+  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-14  -isystem /opt/homebrew/opt/sfml@2/include -g -O1 -g -std=gnu++17 -arch arm64 -o CMakeFiles/chessli.dir/src/engine.cpp.o -c \"/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/engine.cpp\"",
+  "file": "/Users/christopherli/Documents/Junior/Chess/cpp Engine/src/engine.cpp",
+  "output": "CMakeFiles/chessli.dir/src/engine.cpp.o"
 }
 ]

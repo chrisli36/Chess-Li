@@ -4,9 +4,9 @@
 # compile CXX with /opt/homebrew/bin/aarch64-apple-darwin23-g++-14
 CXX_DEFINES = 
 
-CXX_INCLUDES = -isystem /opt/homebrew/include
+CXX_INCLUDES = -isystem /opt/homebrew/opt/sfml@2/include
 
-CXX_FLAGSarm64 = -g -std=gnu++17 -arch arm64
+CXX_FLAGSarm64 = -g -O1 -g -std=gnu++17 -arch arm64
 
-CXX_FLAGS = -g -std=gnu++17 -arch arm64
+CXX_FLAGS = -g -O1 -g -std=gnu++17 -arch arm64
 

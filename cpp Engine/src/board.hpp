@@ -10,14 +10,24 @@
 #include "turn.hpp"
 #include "move.hpp"
 
+enum GameState {
+    WHITE_WIN,
+    BLACK_WIN,
+    DRAW,
+    IN_PROGRESS
+};
+
 class Board {
 public:
+    friend class Engine;
+    
+    static constexpr const char* STARTING_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     /**
      * @brief Constructs a new Board object from a FEN string.
      * 
      * @param fen
      */
-    Board(std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    Board(std::string fen = STARTING_BOARD);
 
     /**
      * @brief Prints the board to the console.
@@ -74,6 +84,27 @@ public:
         return controlled_squares.covers(sq);
     }
 
+    /**
+     * @brief Returns the current turn.
+     * 
+     * @return The current turn (WHITE or BLACK).
+     */
+    constexpr Turn get_turn() const {
+        return turn;
+    }
+
+    /**
+     * @brief Undoes the last move on the board.
+     * 
+     */
+    void undo_move();
+
+    /**
+     * @brief returns the current game state
+     *
+     */
+    GameState get_game_state();
+
 private:
     // VARIABLES
     // board state variables
@@ -86,8 +117,11 @@ private:
     Turn turn;
     Bitboard en_passant_square;
 
+    // move history
+    std::vector<UnMove> history;
+
     // turn specific variables
-    bool inited = false;
+    bool calculated = false;
     bool castle_king, castle_queen;
     Bitboard* friends;
     Bitboard* enemies;
@@ -110,18 +144,19 @@ private:
     // METHODS
     void reset();
     void update_turn();
-    bool is_valid_fr(const int file, const int rank, int* sq);
+    bool is_valid_fr(const int file, const int rank, int* sq) const;
     void erase_piece(const int sq);
     void add_piece(const int sq, const Piece piece);
     void rook_disabling_castling_move(const uint8_t sq);
-    void add_king_attacker(const uint8_t start, Bitboard attacks);
-    bool is_sliding_piece(const Piece piece);
+    inline void add_king_attacker(const uint8_t start, Bitboard attacks);
     void calculate_pins();
-    bool can_move_under_pin(const uint8_t sq, const uint8_t new_sq);
-    bool two_pawns_en_passant(const int file, const int rank, const int dir[2], int* two_pawns_sq);
-    bool is_aligned(const int dir[2], const Piece piece);
+    inline bool can_move_under_pin(const uint8_t sq, const uint8_t new_sq);
+    bool two_pawns_en_passant(const int file, const int rank, const int dir[2], int* two_pawns_sq) const;
+    bool is_aligned(const int dir[2], const Piece piece) const;
 
     // MOVE GENERATION
+    void calculate_moves();
+
     void pawn_controlled(const uint8_t sq);
     void knight_controlled(const uint8_t sq);
     void bishop_controlled(const uint8_t sq);
@@ -137,6 +172,8 @@ private:
     void king_moves(const uint8_t sq);
 
     // CONSTANTS
+    static constexpr int BOARD_SIZE = 8;
+    static constexpr int BOARD_SQUARES = 64;
     static constexpr Piece::PieceType PIECES[] = { Piece::PAWN, Piece::KNIGHT, Piece::BISHOP, Piece::ROOK, Piece::QUEEN, Piece::KING };
     static constexpr int BISHOP_DIRECTIONS[4][2] = {
         { 1,  1}, { 1, -1}, {-1, -1}, {-1,  1}
@@ -172,4 +209,14 @@ private:
         Bitboard(1ULL << D1) | Bitboard(1ULL << C1) | Bitboard(1ULL << B1),
         Bitboard(1ULL << D8) | Bitboard(1ULL << C8) | Bitboard(1ULL << B8),
     };
+    
+    // Common calculation constants
+    static constexpr int PAWN_START_RANK_WHITE = 1;
+    static constexpr int PAWN_START_RANK_BLACK = 6;
+    static constexpr int PAWN_PROMOTION_RANK_WHITE = 6;
+    static constexpr int PAWN_PROMOTION_RANK_BLACK = 1;
+    static constexpr int PAWN_MOVE_ONE = 8;
+    static constexpr int PAWN_MOVE_TWO = 16;
+    static constexpr int PAWN_FORWARD_WHITE = 1;
+    static constexpr int PAWN_FORWARD_BLACK = -1;
 };
