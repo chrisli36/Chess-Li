@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchess_engine.a CMakeFiles/chess_engine.dir/src/board.cpp.o CMakeFiles/chess_engine.dir/src/engine.cpp.o CMakeFiles/chess_engine.dir/src/adapter.cpp.o
+/usr/bin/ranlib libchess_engine.a

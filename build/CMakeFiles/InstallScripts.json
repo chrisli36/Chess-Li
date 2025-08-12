@@ -1,7 +1,8 @@
 {
 	"InstallScripts" : 
 	[
-		"/Users/christopherli/Documents/Junior/Chess/build/cmake_install.cmake"
+		"/Users/christopherli/Documents/Junior/Chess/build/cmake_install.cmake",
+		"/Users/christopherli/Documents/Junior/Chess/build/_deps/nlohmann_json-build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

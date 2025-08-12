@@ -117,24 +117,61 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named chessli
+# Target rules for targets named chess_engine
 
 # Build rule for target.
-chessli: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chessli
-.PHONY : chessli
+chess_engine: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chess_engine
+.PHONY : chess_engine
 
 # fast build rule for target.
-chessli/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/build
-.PHONY : chessli/fast
+chess_engine/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/build
+.PHONY : chess_engine/fast
+
+#=============================================================================
+# Target rules for targets named server
+
+# Build rule for target.
+server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server
+.PHONY : server
+
+# fast build rule for target.
+server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
+.PHONY : server/fast
+
+src/adapter.o: src/adapter.cpp.o
+.PHONY : src/adapter.o
+
+# target to build an object file
+src/adapter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/adapter.cpp.o
+.PHONY : src/adapter.cpp.o
+
+src/adapter.i: src/adapter.cpp.i
+.PHONY : src/adapter.i
+
+# target to preprocess a source file
+src/adapter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/adapter.cpp.i
+.PHONY : src/adapter.cpp.i
+
+src/adapter.s: src/adapter.cpp.s
+.PHONY : src/adapter.s
+
+# target to generate assembly for a file
+src/adapter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/adapter.cpp.s
+.PHONY : src/adapter.cpp.s
 
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
 # target to build an object file
 src/board.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/board.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/board.cpp.o
 .PHONY : src/board.cpp.o
 
 src/board.i: src/board.cpp.i
@@ -142,7 +179,7 @@ src/board.i: src/board.cpp.i
 
 # target to preprocess a source file
 src/board.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/board.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/board.cpp.i
 .PHONY : src/board.cpp.i
 
 src/board.s: src/board.cpp.s
@@ -150,39 +187,15 @@ src/board.s: src/board.cpp.s
 
 # target to generate assembly for a file
 src/board.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/board.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/board.cpp.s
 .PHONY : src/board.cpp.s
-
-src/chess_ui.o: src/chess_ui.cpp.o
-.PHONY : src/chess_ui.o
-
-# target to build an object file
-src/chess_ui.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/chess_ui.cpp.o
-.PHONY : src/chess_ui.cpp.o
-
-src/chess_ui.i: src/chess_ui.cpp.i
-.PHONY : src/chess_ui.i
-
-# target to preprocess a source file
-src/chess_ui.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/chess_ui.cpp.i
-.PHONY : src/chess_ui.cpp.i
-
-src/chess_ui.s: src/chess_ui.cpp.s
-.PHONY : src/chess_ui.s
-
-# target to generate assembly for a file
-src/chess_ui.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/chess_ui.cpp.s
-.PHONY : src/chess_ui.cpp.s
 
 src/engine.o: src/engine.cpp.o
 .PHONY : src/engine.o
 
 # target to build an object file
 src/engine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/engine.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/engine.cpp.o
 .PHONY : src/engine.cpp.o
 
 src/engine.i: src/engine.cpp.i
@@ -190,7 +203,7 @@ src/engine.i: src/engine.cpp.i
 
 # target to preprocess a source file
 src/engine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/engine.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/engine.cpp.i
 .PHONY : src/engine.cpp.i
 
 src/engine.s: src/engine.cpp.s
@@ -198,32 +211,32 @@ src/engine.s: src/engine.cpp.s
 
 # target to generate assembly for a file
 src/engine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/engine.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess_engine.dir/build.make CMakeFiles/chess_engine.dir/src/engine.cpp.s
 .PHONY : src/engine.cpp.s
 
-src/main.o: src/main.cpp.o
-.PHONY : src/main.o
+src/simple_server_fixed.o: src/simple_server_fixed.cpp.o
+.PHONY : src/simple_server_fixed.o
 
 # target to build an object file
-src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/main.cpp.o
-.PHONY : src/main.cpp.o
+src/simple_server_fixed.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/simple_server_fixed.cpp.o
+.PHONY : src/simple_server_fixed.cpp.o
 
-src/main.i: src/main.cpp.i
-.PHONY : src/main.i
+src/simple_server_fixed.i: src/simple_server_fixed.cpp.i
+.PHONY : src/simple_server_fixed.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/simple_server_fixed.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/simple_server_fixed.cpp.i
+.PHONY : src/simple_server_fixed.cpp.i
 
-src/main.s: src/main.cpp.s
-.PHONY : src/main.s
+src/simple_server_fixed.s: src/simple_server_fixed.cpp.s
+.PHONY : src/simple_server_fixed.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chessli.dir/build.make CMakeFiles/chessli.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/simple_server_fixed.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/simple_server_fixed.cpp.s
+.PHONY : src/simple_server_fixed.cpp.s
 
 # Help Target
 help:
@@ -233,19 +246,20 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... chessli"
+	@echo "... chess_engine"
+	@echo "... server"
+	@echo "... src/adapter.o"
+	@echo "... src/adapter.i"
+	@echo "... src/adapter.s"
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"
-	@echo "... src/chess_ui.o"
-	@echo "... src/chess_ui.i"
-	@echo "... src/chess_ui.s"
 	@echo "... src/engine.o"
 	@echo "... src/engine.i"
 	@echo "... src/engine.s"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
+	@echo "... src/simple_server_fixed.o"
+	@echo "... src/simple_server_fixed.i"
+	@echo "... src/simple_server_fixed.s"
 .PHONY : help
 
 

@@ -1,0 +1,1 @@
+/opt/homebrew/bin/aarch64-apple-darwin23-g++-14 -g -O1 -g -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/curl/lib CMakeFiles/server.dir/src/simple_server_fixed.cpp.o -o server  libchess_engine.a

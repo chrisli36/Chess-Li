@@ -11,6 +11,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/4.0.0/CMakeCCompiler.cmake"
   "CMakeFiles/4.0.0/CMakeCXXCompiler.cmake"
   "CMakeFiles/4.0.0/CMakeSystem.cmake"
+  "_deps/nlohmann_json-src/CMakeLists.txt"
+  "_deps/nlohmann_json-src/cmake/config.cmake.in"
+  "_deps/nlohmann_json-src/cmake/nlohmann_jsonConfigVersion.cmake.in"
+  "_deps/nlohmann_json-src/cmake/pkg-config.pc.in"
   "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLConfig.cmake"
   "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLConfigDependencies.cmake"
   "/opt/homebrew/opt/sfml@2/lib/cmake/SFML/SFMLConfigVersion.cmake"
@@ -22,6 +26,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/share/cmake/Modules/CMakeGenericSystem.cmake"
   "/opt/homebrew/share/cmake/Modules/CMakeInitializeConfigs.cmake"
   "/opt/homebrew/share/cmake/Modules/CMakeLanguageInformation.cmake"
+  "/opt/homebrew/share/cmake/Modules/CMakePackageConfigHelpers.cmake"
   "/opt/homebrew/share/cmake/Modules/CMakeSystemSpecificInformation.cmake"
   "/opt/homebrew/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake"
   "/opt/homebrew/share/cmake/Modules/Compiler/AppleClang-C.cmake"
@@ -29,6 +34,14 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/opt/homebrew/share/cmake/Modules/Compiler/Clang.cmake"
   "/opt/homebrew/share/cmake/Modules/Compiler/GNU.cmake"
+  "/opt/homebrew/share/cmake/Modules/ExternalProject.cmake"
+  "/opt/homebrew/share/cmake/Modules/ExternalProject/shared_internal_commands.cmake"
+  "/opt/homebrew/share/cmake/Modules/FetchContent.cmake"
+  "/opt/homebrew/share/cmake/Modules/FetchContent/CMakeLists.cmake.in"
+  "/opt/homebrew/share/cmake/Modules/FindGit.cmake"
+  "/opt/homebrew/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
+  "/opt/homebrew/share/cmake/Modules/FindPackageMessage.cmake"
+  "/opt/homebrew/share/cmake/Modules/GNUInstallDirs.cmake"
   "/opt/homebrew/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake"
   "/opt/homebrew/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake"
   "/opt/homebrew/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake"
@@ -46,6 +59,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/share/cmake/Modules/Platform/Linker/Apple-AppleClang-CXX.cmake"
   "/opt/homebrew/share/cmake/Modules/Platform/Linker/Apple-AppleClang.cmake"
   "/opt/homebrew/share/cmake/Modules/Platform/UnixPaths.cmake"
+  "/opt/homebrew/share/cmake/Modules/WriteBasicConfigVersionFile.cmake"
   )
 
 # The corresponding makefile is:
@@ -56,10 +70,16 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "_deps/nlohmann_json-subbuild/CMakeLists.txt"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "_deps/nlohmann_json-build/nlohmann_json.pc"
+  "_deps/nlohmann_json-build/nlohmann_jsonConfigVersion.cmake"
+  "_deps/nlohmann_json-build/nlohmann_jsonConfig.cmake"
+  "_deps/nlohmann_json-build/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/chessli.dir/DependInfo.cmake"
+  "CMakeFiles/chess_engine.dir/DependInfo.cmake"
+  "CMakeFiles/server.dir/DependInfo.cmake"
   )

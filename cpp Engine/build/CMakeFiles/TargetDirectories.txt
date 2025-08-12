@@ -1,3 +1,6 @@
-/Users/christopherli/Documents/Junior/Chess/cpp Engine/build/CMakeFiles/chessli.dir
+/Users/christopherli/Documents/Junior/Chess/cpp Engine/build/CMakeFiles/chess_engine.dir
+/Users/christopherli/Documents/Junior/Chess/cpp Engine/build/CMakeFiles/server.dir
 /Users/christopherli/Documents/Junior/Chess/cpp Engine/build/CMakeFiles/edit_cache.dir
 /Users/christopherli/Documents/Junior/Chess/cpp Engine/build/CMakeFiles/rebuild_cache.dir
+/Users/christopherli/Documents/Junior/Chess/cpp Engine/build/_deps/nlohmann_json-build/CMakeFiles/edit_cache.dir
+/Users/christopherli/Documents/Junior/Chess/cpp Engine/build/_deps/nlohmann_json-build/CMakeFiles/rebuild_cache.dir
