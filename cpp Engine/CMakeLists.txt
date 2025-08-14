@@ -37,3 +37,11 @@ target_include_directories(chessli PRIVATE
 
 # Link SFML using targets (SFML 3.0 approach)
 target_link_libraries(chessli PRIVATE SFML::Graphics SFML::Window SFML::System)
+
+# Copy assets to build directory
+add_custom_command(TARGET chessli POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_SOURCE_DIR}/../Python Engine/pieces.png"
+    "${CMAKE_BINARY_DIR}/pieces.png"
+    COMMENT "Copying pieces.png to build directory"
+)
