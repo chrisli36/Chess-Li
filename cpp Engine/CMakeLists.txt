@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(SFMLChessStarter)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Optimization flags for maximum performance
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -16,10 +17,8 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O1 -g")
 endif()
 
-# Homebrew SFML path
-set(CMAKE_PREFIX_PATH "/opt/homebrew/opt/sfml@2")
-
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+# Find SFML 3.0
+find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
 # Add executable
 add_executable(chessli
@@ -29,5 +28,11 @@ add_executable(chessli
     src/engine.cpp
 )
 
-# Link SFML
-target_link_libraries(chessli PRIVATE sfml-graphics sfml-window sfml-system)
+# Set include directories for SFML 3.0
+target_include_directories(chessli PRIVATE 
+    /opt/homebrew/Cellar/sfml/3.0.1/include
+    ${SFML_INCLUDE_DIRS}
+)
+
+# Link SFML using targets (SFML 3.0 approach)
+target_link_libraries(chessli PRIVATE SFML::Graphics SFML::Window SFML::System)

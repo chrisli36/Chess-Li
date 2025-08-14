@@ -36,7 +36,9 @@ void run_regular_board(const std::string& fen) {
     
     Board board(fen);
     
-    sf::RenderWindow window(sf::VideoMode(BOARD_SIZE * SQUARE_SIZE, BOARD_SIZE * SQUARE_SIZE), "ChessLi - Board Mode");
+    const sf::Vector2u windowSize = sf::Vector2u(BOARD_SIZE * SQUARE_SIZE, BOARD_SIZE * SQUARE_SIZE);
+    const sf::VideoMode videoMode(windowSize);
+    sf::RenderWindow window(videoMode, "ChessLi - Board Mode");
     
     sf::Texture piece_texture;
     if (!piece_texture.loadFromFile("pieces.png")) {
@@ -47,9 +49,8 @@ void run_regular_board(const std::string& fen) {
     ChessUI ui(&board, window, piece_texture, SQUARE_SIZE, CIRCLE_RADIUS);
     
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            ui.handle_event(event);
+        if (auto event = window.pollEvent()) {
+            ui.handle_event(*event);
         }
         ui.render();
     }
@@ -63,7 +64,9 @@ void run_bot_mode(const std::string& fen, int engine_depth, const Turn player_co
     Board board(fen);
     Engine engine(&board);
     
-    sf::RenderWindow window(sf::VideoMode(BOARD_SIZE * SQUARE_SIZE, BOARD_SIZE * SQUARE_SIZE), "ChessLi - Bot Mode");
+    const sf::Vector2u windowSize = sf::Vector2u(BOARD_SIZE * SQUARE_SIZE, BOARD_SIZE * SQUARE_SIZE);
+    const sf::VideoMode videoMode(windowSize);
+    sf::RenderWindow window(videoMode, "ChessLi - Bot Mode");
     
     sf::Texture piece_texture;
     if (!piece_texture.loadFromFile("pieces.png")) {
@@ -74,9 +77,8 @@ void run_bot_mode(const std::string& fen, int engine_depth, const Turn player_co
     ChessUI ui(&board, window, piece_texture, SQUARE_SIZE, CIRCLE_RADIUS, &engine, engine_depth, player_color);
     
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            ui.handle_event(event);
+        if (auto event = window.pollEvent()) {
+            ui.handle_event(*event);
         }
         ui.render();
     }

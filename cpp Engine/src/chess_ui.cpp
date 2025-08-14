@@ -14,7 +14,7 @@ void ChessUI::reset_state() {
 }
 
 void ChessUI::handle_event(const sf::Event& event) {
-    if (event.type == sf::Event::Closed) {
+    if (event.is<sf::Event::Closed>()) {
         window.close();
         return;
     }
@@ -24,11 +24,14 @@ void ChessUI::handle_event(const sf::Event& event) {
         reset_state();
     } else if (waiting_for_promotion) {
         handle_promotion_input(event);
-    } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left) {
-        if (bot_mode) board->undo_move();
-        board->undo_move();
-        reset_state();
-    } else {
+    } else if (event.is<sf::Event::KeyPressed>()) {
+        const auto* keyEvent = event.getIf<sf::Event::KeyPressed>();
+        if (keyEvent && keyEvent->code == sf::Keyboard::Key::Left) {
+            if (bot_mode) board->undo_move();
+            board->undo_move();
+            reset_state();
+        }
+    } else if (event.is<sf::Event::MouseButtonPressed>()) {
         handle_mouse_input(event);
     }
 }
@@ -58,24 +61,27 @@ void ChessUI::render() {
 }
 
 void ChessUI::handle_promotion_input(const sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
+    if (event.is<sf::Event::KeyPressed>()) {
+        const auto* keyEvent = event.getIf<sf::Event::KeyPressed>();
+        if (!keyEvent) return;
+        
         MoveFlag promotion_flag = MoveFlag::NO_FLAG;
         
-        switch (event.key.code) {
-            case sf::Keyboard::Num0:
-            case sf::Keyboard::Numpad0:
+        switch (keyEvent->code) {
+            case sf::Keyboard::Key::Num0:
+            case sf::Keyboard::Key::Numpad0:
                 promotion_flag = MoveFlag::QUEEN_PROMOTION;
                 break;
-            case sf::Keyboard::Num1:
-            case sf::Keyboard::Numpad1:
+            case sf::Keyboard::Key::Num1:
+            case sf::Keyboard::Key::Numpad1:
                 promotion_flag = MoveFlag::ROOK_PROMOTION;
                 break;
-            case sf::Keyboard::Num2:
-            case sf::Keyboard::Numpad2:
+            case sf::Keyboard::Key::Num2:
+            case sf::Keyboard::Key::Numpad2:
                 promotion_flag = MoveFlag::BISHOP_PROMOTION;
                 break;
-            case sf::Keyboard::Num3:
-            case sf::Keyboard::Numpad3:
+            case sf::Keyboard::Key::Num3:
+            case sf::Keyboard::Key::Numpad3:
                 promotion_flag = MoveFlag::KNIGHT_PROMOTION;
                 break;
             default:
@@ -93,9 +99,12 @@ void ChessUI::handle_promotion_input(const sf::Event& event) {
 }
 
 void ChessUI::handle_mouse_input(const sf::Event& event) {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        int file = event.mouseButton.x / SQUARE_SIZE;
-        int rank = 7 - (event.mouseButton.y / SQUARE_SIZE);
+    if (event.is<sf::Event::MouseButtonPressed>()) {
+        const auto* mouseEvent = event.getIf<sf::Event::MouseButtonPressed>();
+        if (!mouseEvent) return;
+        
+        int file = mouseEvent->position.x / SQUARE_SIZE;
+        int rank = 7 - (mouseEvent->position.y / SQUARE_SIZE);
         int curr_sq = rank * 8 + file;
 
         if (is_selected(prev_sq)) {
@@ -127,14 +136,16 @@ void ChessUI::handle_mouse_input(const sf::Event& event) {
 
 void ChessUI::draw_square(const int file, const int rank, const sf::Color* color) {
     sf::RectangleShape square(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
-    square.setPosition(file * SQUARE_SIZE, (7 - rank) * SQUARE_SIZE);
+    const sf::Vector2f position(file * SQUARE_SIZE, (7 - rank) * SQUARE_SIZE);
+    square.setPosition(position);
     square.setFillColor(*color);
     window.draw(square);
 }
 
 void ChessUI::draw_circle(const int file, const int rank, const sf::Color* color) {
     sf::CircleShape circle(CIRCLE_RADIUS);
-    circle.setPosition(file * SQUARE_SIZE + CIRCLE_START_OFFSET, (7 - rank) * SQUARE_SIZE + CIRCLE_START_OFFSET);
+    const sf::Vector2f position(file * SQUARE_SIZE + CIRCLE_START_OFFSET, (7 - rank) * SQUARE_SIZE + CIRCLE_START_OFFSET);
+    circle.setPosition(position);
     circle.setFillColor(*color);
     window.draw(circle);
 }
@@ -151,12 +162,11 @@ void ChessUI::draw_pieces() {
             piece_color = piece.get_color();
 
             piece_sprite.setTextureRect(sf::IntRect(
-                piece_location * TEXTURE_SQUARE_SIZE,
-                piece_color * TEXTURE_SQUARE_SIZE, 
-                TEXTURE_SQUARE_SIZE, 
-                TEXTURE_SQUARE_SIZE
+                sf::Vector2i(piece_location * TEXTURE_SQUARE_SIZE, piece_color * TEXTURE_SQUARE_SIZE),
+                sf::Vector2i(TEXTURE_SQUARE_SIZE, TEXTURE_SQUARE_SIZE)
             ));
-            piece_sprite.setPosition(file * SQUARE_SIZE, (7 - rank) * SQUARE_SIZE);
+            const sf::Vector2f position(file * SQUARE_SIZE, (7 - rank) * SQUARE_SIZE);
+            piece_sprite.setPosition(position);
             window.draw(piece_sprite);
         }
     }

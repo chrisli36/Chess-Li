@@ -42,25 +42,25 @@ private:
 
 public:
     ChessUI(Board* board, sf::RenderWindow& window, sf::Texture& piece_texture, int square_size, int circle_radius)
-        : board(board), moves(board->get_moves()), window(window), piece_texture(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius) {
+        : board(board), moves(board->get_moves()), window(window), piece_texture(piece_texture), 
+          piece_sprite(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius) {
         CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
-        piece_sprite.setTexture(piece_texture);
-        piece_sprite.setScale(
+        piece_sprite.setScale(sf::Vector2f(
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE,
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE
-        );
+        ));
     }
 
     ChessUI(Board* board, sf::RenderWindow& window, sf::Texture& piece_texture, int square_size, int circle_radius, 
             Engine* engine, int depth = 3, Turn player_color = Turn::WHITE)
-        : board(board), moves(board->get_moves()), window(window), piece_texture(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius), 
+        : board(board), moves(board->get_moves()), window(window), piece_texture(piece_texture), 
+          piece_sprite(piece_texture), SQUARE_SIZE(square_size), CIRCLE_RADIUS(circle_radius), 
             engine(engine), engine_depth(depth), player_color(player_color) {
         CIRCLE_START_OFFSET = (SQUARE_SIZE - (CIRCLE_RADIUS * 2)) / 2;
-        piece_sprite.setTexture(piece_texture);
-        piece_sprite.setScale(
+        piece_sprite.setScale(sf::Vector2f(
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE,
             static_cast<float>(SQUARE_SIZE) / TEXTURE_SQUARE_SIZE
-        );
+        ));
         bot_mode = true;
     }
 
