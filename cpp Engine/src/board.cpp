@@ -6,10 +6,17 @@
 #include <cassert>
 
 Board::Board(const std::string fen) {
+    set_fen(fen);
+}
+
+void Board::set_fen(const std::string fen) {
+    // reset board
     reset();
+    history.clear();
 
     // set board pieces
     int i = 0, sq = 0, real_sq;
+    char c;
     Piece piece;
     for (char c : fen) {
         i++;
@@ -36,11 +43,13 @@ Board::Board(const std::string fen) {
     }
 
     // set turn
-    turn = (fen[i] == 'w') ? Turn::WHITE : Turn::BLACK;
+    turn = 
+        (fen[i] == 'w') ? Turn::WHITE : 
+        (fen[i] == 'b') ? Turn::BLACK : 
+        throw std::runtime_error("FEN Parsing error on turn");
     i++; i++;
 
     // set castling rights
-    castling_rights = CastlingRights(0);
     while (fen[i] != ' ') {
         switch (fen[i]) {
             case 'K': castling_rights.add_right(CastlingRights::K); break;
@@ -65,6 +74,50 @@ Board::Board(const std::string fen) {
     update_turn();
 }
 
+const std::string Board::get_fen() {
+    int r, c;
+    Piece p;
+    std::string fen;
+    int empty_count;
+    
+    // set board pieces
+    for (r = BOARD_SIZE - 1; r >= 0; r--) {
+        for (c = 0; c < BOARD_SIZE; c++) {
+            p = squares[r * 8 + c];
+            if (p.is_empty()) empty_count++;
+            else {
+                if (empty_count) fen.append(std::to_string(empty_count));
+                else fen.append(std::to_string(p.to_char()));
+            }
+        }
+        fen.append(std::to_string('/'));
+        empty_count = 0;
+    }
+    fen.append(std::to_string(' '));
+
+    // set turn
+    std::string turn_str = std::to_string(turn == Turn::WHITE ? 'w' : 'b');
+    fen.append(turn_str);
+    fen.append(std::to_string(' '));
+
+    // set castling rights
+    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('K'));
+    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('Q'));
+    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('k'));
+    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('q'));
+    fen.append(std::to_string(' '));
+
+    // set en passant square
+    if (en_passant_square) {
+        fen.append(Move::fen_of(__builtin_ctzll(en_passant_square)));
+    } else {
+        fen.append(std::to_string('-'));
+    }
+
+
+    return fen;
+}
+
 void Board::reset() {
     for (int i = 0; i < 64; ++i) {
         squares[i].reset();
@@ -76,13 +129,10 @@ void Board::reset() {
         color_bitboards[i].reset();
     }
     all_pieces_bitboard.reset();
-    castling_rights = CastlingRights();
+    castling_rights.reset();
     turn = Turn::WHITE;
     en_passant_square.reset();
-    controlled_squares.reset();
-    attacker_count = 0;
-    attackers[0] = Position::INVALID_SQUARE;
-    attackers[1] = Position::INVALID_SQUARE;
+    history.clear();
     calculated = false;
 }
 
@@ -101,11 +151,11 @@ bool Board::is_valid_fr(const int file, const int rank, int* sq) const {
 }
 
 void Board::print() const {
-    for (int rank = BOARD_SIZE - 1; rank >= 0; --rank) {
+    for (int rank = BOARD_SIZE; rank > 0; --rank) {
         std::cout << "  " << std::string(33, '-') << "\n";
         std::cout << rank << " |";
         for (int file = 0; file < BOARD_SIZE; ++file) {
-            std::cout << " " << squares[rank * BOARD_SIZE + file].to_char() << " |";
+            std::cout << " " << squares[(rank - 1) * BOARD_SIZE + file].to_char() << " |";
         }
         std::cout << "\n";
     }
@@ -235,30 +285,35 @@ std::vector<Move> Board::get_moves() {
 
 void Board::calculate_moves() {
     if (calculated) return;
-    uint8_t sq;
-    moves.clear();
-    evasion_mask = Bitboard(~0ULL);
 
-    // calculate controlled squares
+    uint8_t sq;
+
+    // reset calculation state
     controlled_squares.reset();
     attacker_count = 0;
     attackers[0] = Position::INVALID_SQUARE;
     attackers[1] = Position::INVALID_SQUARE;
+    evasion_mask = Bitboard(~0ULL);
+    moves.clear();
+
+    // calculate controlled squares
     for (Piece::PieceType piece : PIECES) {
         CTZLL_ITERATOR(sq, enemy_arr[piece]) {
             (this->*CALCULATE_CONTROLLED_FUNCTIONS[piece])(sq);
         }
     }
 
-    // calculate pins
-    calculate_pins();
-
     // if the king is in double check, only return king moves
     if (attacker_count == 2) {
         const uint8_t king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
         king_moves(king_sq);
         return;
-    } else if (attacker_count == 1) {
+    } 
+
+    // calculate pins
+    calculate_pins();
+    
+    if (attacker_count == 1) {
         const uint8_t king_sq = __builtin_ctzll(friend_arr[Piece::KING]);
         const uint8_t attacker_sq = attackers[0];
         evasion_mask = AttackBitboards::ray_between[attacker_sq][king_sq];

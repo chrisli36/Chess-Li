@@ -60,6 +60,9 @@ struct Move {
 
     static constexpr char file_of(uint8_t sq) { return 'a' + (sq % 8); }
     static constexpr char rank_of(uint8_t sq) { return '1' + (sq / 8); }
+    static constexpr std::string fen_of(uint8_t sq) {
+        return std::to_string(file_of(sq)) + std::to_string(rank_of(sq));
+    }
     static std::string to_algebraic(uint8_t sq) {
         return std::string(1, file_of(sq)) + std::string(1, rank_of(sq));
     }

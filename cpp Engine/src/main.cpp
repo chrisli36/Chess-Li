@@ -3,6 +3,7 @@
 #include <string>
 #include <chrono>
 
+#include "SFML/System/Sleep.hpp"
 #include "board.hpp"
 #include "chess_ui.hpp"
 #include "engine.hpp"
@@ -91,26 +92,39 @@ void run_test_mode(int max_depth) {
     
     Board board;
     Engine engine(&board);
+
+    std::cout << engine.evaluate() << std::endl;
+    std::vector<Move> moves;
     
-    for (int depth = 1; depth <= max_depth; depth++) {
-        auto start = std::chrono::high_resolution_clock::now();
-        int result = engine.search(depth);
-        auto end = std::chrono::high_resolution_clock::now();
-        
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        
-        std::cout << "Depth " << depth << ": " << result << " (";
-        if (duration.count() < 1000) {
-            std::cout << duration.count() << "ms";
-        } else {
-            std::cout << (duration.count() / 1000.0) << "s";
-        }
-        std::cout << ")\n";
+    for(int i = 0; i < 4; i++) {
+        moves = board.get_moves();
+        Move mv0 = moves.at(4);
+        board.make_move(&mv0);
+        std::cout << "making move " << mv0.to_string() << std::endl;
+        std::cout << engine.evaluate() << std::endl;
+        board.print();
+        std::cout << board.get_fen() << std::endl;
     }
+    
+    // for (int depth = 1; depth <= max_depth; depth++) {
+    //     auto start = std::chrono::high_resolution_clock::now();
+    //     int result = engine.search(depth);
+    //     auto end = std::chrono::high_resolution_clock::now();
+        
+    //     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        
+    //     std::cout << "Depth " << depth << ": " << result << " (";
+    //     if (duration.count() < 1000) {
+    //         std::cout << duration.count() << "ms";
+    //     } else {
+    //         std::cout << (duration.count() / 1000.0) << "s";
+    //     }
+    //     std::cout << ")\n";
+    // }
 }
 
 int main(int argc, char* argv[]) {
-    std::string mode = "board";
+    std::string mode = "bot";
     std::string fen = Board::STARTING_BOARD;
     int depth = Engine::DEFAULT_DEPTH;
     Turn player_color = Turn::WHITE;

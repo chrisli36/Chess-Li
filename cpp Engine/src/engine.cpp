@@ -4,42 +4,37 @@
 Engine::Engine(Board* board) : board(board) {}
 
 Move Engine::get_best_move(int depth) {
-    int alpha = -MATE, beta = +MATE;
-    int best_score = -MATE;
 
-    auto moves = board->get_moves();
+    std::vector moves = board->get_moves();
     if (moves.empty()) return Move{};
-    
-    // Reserve capacity to avoid reallocationsa
-    moves.reserve(256);
 
-    std::sort(moves.begin(), moves.end(),
-              [this](const Move& a, const Move& b){ return score_move(a) > score_move(b); });
-
-    std::vector<Move> best_moves;
-    best_moves.reserve(10); // Reserve space for best moves
-
+    best_moves.clear();
+    int best_score = -MATE;
+    int alpha = -MATE, beta = MATE;
     for (auto& move : moves) {
         board->make_move(&move);
-        int score = -minimax(depth - 1, -beta, -alpha);
+        int score = -minimax(depth - 1, alpha, beta);
         board->undo_move();
+
         std::cout << "move: " << move.to_string() << " score: " << score << "\n";
 
         if (score > best_score) {
             best_score = score;
             best_moves.clear();
-            // best_moves.emplace_back(move);
             best_moves.push_back(move);
+            if (score == MATE) {
+                break;
+            }
         } else if (score == best_score) {
-            // best_moves.emplace_back(move);
             best_moves.push_back(move);
         }
 
-        if (score > alpha) alpha = score;
+        // alpha = std::max(score, alpha);
     }
 
+    std::cout << "BEST MOVES:" << std::endl;
     for (auto& move : best_moves) {
-        std::cout << "\tmove: " << move.to_string() << "\n";
+        std::cout << "\t" << move.to_string() << "\n";
     }
 
     if (best_moves.size() == 1) return best_moves[0];
@@ -78,7 +73,6 @@ int Engine::search(int depth) {
     }
     int ret = 0;
     std::vector<Move> moves = board->get_moves();
-    moves.reserve(256); // Reserve capacity for typical chess positions
     for (const Move& move : moves) {
         board->make_move(&move);
         ret += search(depth - 1);
@@ -149,3 +143,33 @@ int Engine::minimax(int depth, int alpha, int beta) {
     }
     return alpha;
 }
+
+
+/*
+
+You play as: white
+making move: e2->e4
+board turn: black
+move: a7->a6 score: -145
+move: a7->a5 score: -115
+move: b7->b6 score: -125
+move: b7->b5 score: -190
+move: c7->c6 score: -135
+move: c7->c5 score: -120
+move: d7->d6 score: -145
+move: d7->d5 score: -160
+move: e7->e6 score: -75
+move: e7->e5 score: -115
+move: f7->f6 score: -175
+move: f7->f5 score: -175
+move: g7->g6 score: -125
+move: g7->g5 score: -155
+move: h7->h6 score: -135
+move: h7->h5 score: -145
+move: b8->a6 score: -110
+move: b8->c6 score: -70
+move: g8->f6 score: -155
+move: g8->h6 score: -155
+Engine played: b8->c6
+
+*/

@@ -15,6 +15,14 @@ struct CastlingRights {
      */
     constexpr CastlingRights(uint8_t r = 0) : rights(r) {}
 
+    /**
+     * @brief Resets CastlingRights to default, which is no rights
+     * 
+     */
+    constexpr void reset() {
+        rights = 0;
+    }
+
     /** 
      * @brief Determines if a side can castle.
      * 

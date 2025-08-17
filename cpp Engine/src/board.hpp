@@ -30,6 +30,20 @@ public:
     Board(std::string fen = STARTING_BOARD);
 
     /**
+     * @brief Sets the Board position, resets history
+     * 
+     * @param fen
+     */
+    void set_fen(std::string fen);
+
+    /**
+     * @brief Get the current Board position in FEN notation
+     * 
+     * @param fen
+     */
+    const std::string get_fen();
+
+    /**
      * @brief Prints the board to the console.
      * 
      */
@@ -106,33 +120,32 @@ public:
     GameState get_game_state();
 
 private:
-    // VARIABLES
-    // board state variables
+    /* VARIABLES */
+
+    // board state
     Piece squares[64];
     Bitboard piece_bitboards[2][6];
     Bitboard color_bitboards[2];
     Bitboard all_pieces_bitboard;
     CastlingRights castling_rights;
-
     Turn turn;
     Bitboard en_passant_square;
-
-    // move history
     std::vector<UnMove> history;
 
-    // turn specific variables
-    bool calculated = false;
+    // turn state
     bool castle_king, castle_queen;
     Bitboard* friends;
     Bitboard* enemies;
     Bitboard* friend_arr;
     Bitboard* enemy_arr;
+
+    // calculation state
+    bool calculated = false;
     Bitboard controlled_squares;
-    uint8_t attackers[2];
     uint8_t attacker_count;
+    uint8_t attackers[2];
     Bitboard pinned_limits[64];
     Bitboard evasion_mask;
-
     std::vector<Move> moves;
 
     // Macro for iterating over sliding piece directions
