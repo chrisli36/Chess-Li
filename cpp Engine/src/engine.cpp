@@ -16,7 +16,7 @@ Move Engine::get_best_move(int depth) {
         int score = -minimax(depth - 1, alpha, beta);
         board->undo_move();
 
-        std::cout << "move: " << move.to_string() << " score: " << score << "\n";
+        std::cout << "move: " << move.to_uci() << " score: " << score << "\n";
 
         if (score > best_score) {
             best_score = score;
@@ -34,7 +34,7 @@ Move Engine::get_best_move(int depth) {
 
     std::cout << "BEST MOVES:" << std::endl;
     for (auto& move : best_moves) {
-        std::cout << "\t" << move.to_string() << "\n";
+        std::cout << "\t" << move.to_uci() << "\n";
     }
 
     if (best_moves.size() == 1) return best_moves[0];
@@ -50,9 +50,9 @@ int Engine::score_move(Move move) {
     Piece move_piece = board->get_piece(move.start());
     Piece end_piece = board->get_piece(end);
     Piece promotion_piece = move.promotion_piece(board->get_turn());
-    uint8_t move_piece_type = move_piece.get_piece();
-    uint8_t end_piece_type = end_piece.get_piece();
-    uint8_t promotion_piece_type = promotion_piece.get_piece();
+    Piece::PieceType move_piece_type = move_piece.get_piece();
+    Piece::PieceType end_piece_type = end_piece.get_piece();
+    Piece::PieceType promotion_piece_type = promotion_piece.get_piece();
 
     int score = 0;
     if (!end_piece.is_empty()) {
@@ -143,33 +143,3 @@ int Engine::minimax(int depth, int alpha, int beta) {
     }
     return alpha;
 }
-
-
-/*
-
-You play as: white
-making move: e2->e4
-board turn: black
-move: a7->a6 score: -145
-move: a7->a5 score: -115
-move: b7->b6 score: -125
-move: b7->b5 score: -190
-move: c7->c6 score: -135
-move: c7->c5 score: -120
-move: d7->d6 score: -145
-move: d7->d5 score: -160
-move: e7->e6 score: -75
-move: e7->e5 score: -115
-move: f7->f6 score: -175
-move: f7->f5 score: -175
-move: g7->g6 score: -125
-move: g7->g5 score: -155
-move: h7->h6 score: -135
-move: h7->h5 score: -145
-move: b8->a6 score: -110
-move: b8->c6 score: -70
-move: g8->f6 score: -155
-move: g8->h6 score: -155
-Engine played: b8->c6
-
-*/

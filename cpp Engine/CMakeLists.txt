@@ -45,3 +45,10 @@ add_custom_command(TARGET chessli POST_BUILD
     "${CMAKE_BINARY_DIR}/pieces.png"
     COMMENT "Copying pieces.png to build directory"
 )
+
+# UCI engine (no SFML, for subprocess use by HTTP server)
+add_executable(chessli-uci
+    src/uci_main.cpp
+    src/board.cpp
+    src/engine.cpp
+)

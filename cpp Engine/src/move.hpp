@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "piece.hpp"
@@ -46,6 +47,7 @@ struct Move {
     constexpr bool is_castle_kingside() const { return flag() == MoveFlag::KINGSIDE_CASTLE; }
     constexpr bool is_castle_queenside() const { return flag() == MoveFlag::QUEENSIDE_CASTLE; }
 
+    // Promotion
     static constexpr uint8_t FIRST_PROMOTION_FLAG = MoveFlag::QUEEN_PROMOTION;
     constexpr bool is_promotion() const { return flag() >= FIRST_PROMOTION_FLAG; }
     constexpr Piece promotion_piece(Turn turn) const {
@@ -58,16 +60,42 @@ struct Move {
         }
     }
 
+    // Algebraic notation
     static constexpr char file_of(uint8_t sq) { return 'a' + (sq % 8); }
     static constexpr char rank_of(uint8_t sq) { return '1' + (sq / 8); }
-    static constexpr std::string fen_of(uint8_t sq) {
-        return std::to_string(file_of(sq)) + std::to_string(rank_of(sq));
+    static std::string to_algebraic(uint8_t sq) { return std::string(1, file_of(sq)) + std::string(1, rank_of(sq)); }
+
+    // UCI format: e2e4, e7e8q, etc.
+    std::string to_uci() const {
+        std::string uci = to_algebraic(start()) + to_algebraic(end());
+        if (is_promotion()) {
+            switch (flag()) {
+                case QUEEN_PROMOTION:  uci += 'q'; break;
+                case ROOK_PROMOTION:   uci += 'r'; break;
+                case BISHOP_PROMOTION: uci += 'b'; break;
+                case KNIGHT_PROMOTION: uci += 'n'; break;
+                default: break;
+            }
+        }
+        return uci;
     }
-    static std::string to_algebraic(uint8_t sq) {
-        return std::string(1, file_of(sq)) + std::string(1, rank_of(sq));
-    }
-    std::string to_string() const { 
-        return to_algebraic(start()) + "->" + to_algebraic(end());
+    static std::optional<Move> from_uci(const std::string& uci) {
+        if (uci.size() < 4 || uci.size() > 5) return std::nullopt;
+        if (uci[0] < 'a' || uci[0] > 'h' || uci[1] < '1' || uci[1] > '8') return std::nullopt;
+        if (uci[2] < 'a' || uci[2] > 'h' || uci[3] < '1' || uci[3] > '8') return std::nullopt;
+        uint8_t start_sq = static_cast<uint8_t>((uci[1] - '1') * 8 + (uci[0] - 'a'));
+        uint8_t end_sq   = static_cast<uint8_t>((uci[3] - '1') * 8 + (uci[2] - 'a'));
+        MoveFlag flag = MoveFlag::NO_FLAG;
+        if (uci.size() == 5) {
+            switch (uci[4]) {
+                case 'q': flag = MoveFlag::QUEEN_PROMOTION;  break;
+                case 'r': flag = MoveFlag::ROOK_PROMOTION;   break;
+                case 'b': flag = MoveFlag::BISHOP_PROMOTION; break;
+                case 'n': flag = MoveFlag::KNIGHT_PROMOTION; break;
+                default: return std::nullopt;
+            }
+        }
+        return Move(start_sq, end_sq, flag);
     }
 };
 

@@ -70,6 +70,22 @@ void Board::set_fen(const std::string fen) {
     } else {
         en_passant_square = Bitboard(0);
     }
+    i++;
+    
+    // set halfmove clock
+    halfmove_clock = 0;
+    while (i < fen.size() && std::isdigit(fen[i])) {
+        halfmove_clock = halfmove_clock * 10 + (fen[i] - '0');
+        i++;
+    }
+    i++;
+
+    // set fullmove clock
+    fullmove_clock = 0;
+    while (i < fen.size() && std::isdigit(fen[i])) {
+        fullmove_clock = fullmove_clock * 10 + (fen[i] - '0');
+        i++;
+    }
 
     update_turn();
 }
@@ -78,42 +94,55 @@ const std::string Board::get_fen() {
     int r, c;
     Piece p;
     std::string fen;
-    int empty_count;
-    
-    // set board pieces
+    int empty_count = 0;
+
+    // piece placement (ranks 8 down to 1)
     for (r = BOARD_SIZE - 1; r >= 0; r--) {
+        empty_count = 0;
         for (c = 0; c < BOARD_SIZE; c++) {
             p = squares[r * 8 + c];
-            if (p.is_empty()) empty_count++;
-            else {
-                if (empty_count) fen.append(std::to_string(empty_count));
-                else fen.append(std::to_string(p.to_char()));
+            if (p.is_empty()) {
+                empty_count++;
+            } else {
+                if (empty_count > 0) {
+                    fen += std::to_string(empty_count);
+                    empty_count = 0;
+                }
+                fen += static_cast<char>(p.to_char());
             }
         }
-        fen.append(std::to_string('/'));
-        empty_count = 0;
+        if (empty_count > 0) fen += std::to_string(empty_count);
+        if (r > 0) fen += '/';
     }
-    fen.append(std::to_string(' '));
+    fen += ' ';
 
-    // set turn
-    std::string turn_str = std::to_string(turn == Turn::WHITE ? 'w' : 'b');
-    fen.append(turn_str);
-    fen.append(std::to_string(' '));
+    // side to move
+    fen += (turn == Turn::WHITE ? 'w' : 'b');
+    fen += ' ';
 
-    // set castling rights
-    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('K'));
-    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('Q'));
-    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('k'));
-    if (castling_rights.can_castle(CastlingRights::K)) fen.append(std::to_string('q'));
-    fen.append(std::to_string(' '));
+    // castling rights
+    if (castling_rights.can_castle(CastlingRights::K)) fen += 'K';
+    if (castling_rights.can_castle(CastlingRights::Q)) fen += 'Q';
+    if (castling_rights.can_castle(CastlingRights::k)) fen += 'k';
+    if (castling_rights.can_castle(CastlingRights::q)) fen += 'q';
+    if (!castling_rights.can_castle(CastlingRights::K) && !castling_rights.can_castle(CastlingRights::Q) &&
+        !castling_rights.can_castle(CastlingRights::k) && !castling_rights.can_castle(CastlingRights::q)) {
+        fen += '-';
+    }
+    fen += ' ';
 
-    // set en passant square
+    // en passant square
     if (en_passant_square) {
-        fen.append(Move::fen_of(__builtin_ctzll(en_passant_square)));
+        fen += Move::to_algebraic(static_cast<uint8_t>(__builtin_ctzll(en_passant_square)));
     } else {
-        fen.append(std::to_string('-'));
+        fen += '-';
     }
+    fen += ' ';
 
+    // halfmove clock and fullmove number
+    fen += std::to_string(get_halfmove_clock());
+    fen += ' ';
+    fen += std::to_string(get_fullmove_clock());
 
     return fen;
 }
@@ -133,6 +162,8 @@ void Board::reset() {
     turn = Turn::WHITE;
     en_passant_square.reset();
     history.clear();
+    halfmove_clock = 0;
+    fullmove_clock = 1;
     calculated = false;
 }
 
@@ -378,27 +409,21 @@ void Board::make_move(const Move* move) {
     // account for special moves
     en_passant_square.reset();
     if (move->is_en_passant()) {
-        // std::cout << "En passant capture." << std::endl;
         erase_piece(end + ((turn == Turn::WHITE) ? -PAWN_MOVE_ONE : PAWN_MOVE_ONE));
     } else if (move->is_pawn_up_two()) {
-        // std::cout << "Pawn moved up two squares." << std::endl;
         en_passant_square = Bitboard(1ULL << (start + ((turn == Turn::WHITE) ? PAWN_MOVE_ONE : -PAWN_MOVE_ONE)));
     } else if (move->is_castle()) {
-        // std::cout << "Castling move." << std::endl;
         if (move->is_castle_kingside()) {
-            // std::cout << "Kingside castle." << std::endl;
             Piece rook = squares[end + 1];
             erase_piece(end + 1);
             add_piece(end - 1, rook);
         } else if (move->is_castle_queenside()) {
-            // std::cout << "Queenside castle." << std::endl;
             Piece rook = squares[end - 2];
             erase_piece(end - 2);
             add_piece(end + 1, rook);
         }
     } else if (move->is_promotion()) {
         Piece promotion_piece = move->promotion_piece(turn);
-        // std::cout << "Promotion move" << std::endl;
         erase_piece(end);
         add_piece(end, promotion_piece);
     }
@@ -412,10 +437,19 @@ void Board::make_move(const Move* move) {
             castling_rights.remove_right(CastlingRights::k);
             castling_rights.remove_right(CastlingRights::q);
         }
-    } 
+    }
     if (start_piece.get_piece() == Piece::ROOK) rook_disabling_castling_move(start); 
     if (end_piece.get_piece() == Piece::ROOK) rook_disabling_castling_move(end);
 
+    // update halfmove clock if there's a capture or pawn move
+    halfmove_clock++;
+    if (start_piece.get_piece() == Piece::PAWN) halfmove_clock = 0;
+    if (end_piece.get_piece() != Piece::EMPTY) halfmove_clock = 0;
+
+    // update fullmove clock if black just moved
+    if (turn == Turn::BLACK) fullmove_clock++;
+
+    // add the move to the history for undos
     history.push_back(
         UnMove(
             Move(start, end, move->flag()), 
@@ -451,27 +485,21 @@ void Board::undo_move() {
 
     // account for special moves
     if (move.is_en_passant()) {
-        // std::cout << "Undoing en passant capture." << std::endl;
         const Piece pawn = (turn == Turn::WHITE) ? Piece::WHITE_PAWN : Piece::BLACK_PAWN;
         const int actual_end = end + ((turn == Turn::WHITE) ? PAWN_MOVE_ONE : -PAWN_MOVE_ONE);
         add_piece(actual_end, pawn);
     } else if (move.is_pawn_up_two()) {
-        // std::cout << "Undoing pawn moved up two squares." << std::endl;
     } else if (move.is_castle()) {
-        // std::cout << "Undoing castling move." << std::endl;
         if (move.is_castle_kingside()) {
-            // std::cout << "Undoing kingside castle." << std::endl;
             const Piece rook = squares[end - 1];
             erase_piece(end - 1);
             add_piece(end + 1, rook);
         } else if (move.is_castle_queenside()) {
-            // std::cout << "Undoing queenside castle." << std::endl;
             const Piece rook = squares[end + 1];
             erase_piece(end + 1);
             add_piece(end - 2, rook);
         }
     } else if (move.is_promotion()) {
-        // std::cout << "Undoing promotion move." << std::endl;
         const Piece pawn = (turn == Turn::WHITE) ? Piece::BLACK_PAWN : Piece::WHITE_PAWN;
         erase_piece(start);
         add_piece(start, pawn);

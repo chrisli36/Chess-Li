@@ -109,13 +109,27 @@ public:
 
     /**
      * @brief Undoes the last move on the board.
-     * 
+     *
      */
     void undo_move();
 
     /**
-     * @brief returns the current game state
-     *
+     * @brief Returns the plycount (halfmoves) as the number of recorded moves
+     */
+    uint16_t get_ply_count() const { return history.size(); }
+
+    /**
+     * @brief Returns the number of halfmoves since the last capture or pawn move
+     */
+    uint16_t get_halfmove_clock() const { return halfmove_clock; }
+
+    /**
+     * @brief Returns the number of fullmoves
+     */
+    uint16_t get_fullmove_clock() const { return fullmove_clock; }
+
+    /**
+     * @brief Returns the current game state.
      */
     GameState get_game_state();
 
@@ -131,6 +145,8 @@ private:
     Turn turn;
     Bitboard en_passant_square;
     std::vector<UnMove> history;
+    uint16_t halfmove_clock;
+    uint16_t fullmove_clock;
 
     // turn state
     bool castle_king, castle_queen;

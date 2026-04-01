@@ -1,9 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <chrono>
 
-#include "SFML/System/Sleep.hpp"
 #include "board.hpp"
 #include "chess_ui.hpp"
 #include "engine.hpp"
@@ -100,7 +98,7 @@ void run_test_mode(int max_depth) {
         moves = board.get_moves();
         Move mv0 = moves.at(4);
         board.make_move(&mv0);
-        std::cout << "making move " << mv0.to_string() << std::endl;
+        std::cout << "making move " << mv0.to_uci() << std::endl;
         std::cout << engine.evaluate() << std::endl;
         board.print();
         std::cout << board.get_fen() << std::endl;

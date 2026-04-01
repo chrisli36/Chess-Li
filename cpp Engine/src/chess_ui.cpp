@@ -119,7 +119,7 @@ void ChessUI::handle_mouse_input(const sf::Event& event) {
                     prev_sq = -1;
                 } else {
                     // Normal move
-                    std::cout << "making move: " << move.to_string() << "\n";
+                    std::cout << "making move: " << move.to_uci() << "\n";
                     board->make_move(&move);
                     reset_state();
                 }
